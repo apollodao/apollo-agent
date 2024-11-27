@@ -27,4 +27,4 @@ ADD characters /app/characters
 ADD .env /app/.env
 
 # Command to run the container
-CMD ["tail", "-f", "/dev/null"]
+CMD ["pnpm", "start"]
