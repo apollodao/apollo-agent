@@ -21,10 +21,22 @@ RUN pnpm i
 ADD packages /app/packages
 RUN pnpm i
 
-# Add the environment variables
+# Add the environment variables and other files
 ADD scripts /app/scripts
 ADD characters /app/characters
 ADD .env /app/.env
 
+# Build the applications
+RUN pnpm build
+
+# Expose the necessary ports (adjust these based on your actual ports)
+EXPOSE 3000
+
+# Create a startup script
+RUN echo "#!/bin/bash\n\
+pnpm --filter agent start\
+" > /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Command to run the container
-CMD ["tail", "-f", "/dev/null"]
+CMD ["/app/start.sh"]
