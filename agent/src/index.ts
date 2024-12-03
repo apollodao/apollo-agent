@@ -23,8 +23,8 @@ import {
     validateCharacterConfig,
 } from "@ai16z/eliza";
 import { zgPlugin } from "@ai16z/plugin-0g";
-import { goatPlugin } from "@ai16z/plugin-goat";
 import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
+import { goatPlugin } from "@ai16z/plugin-goat";
 // import { buttplugPlugin } from "@ai16z/plugin-buttplug";
 import {
     coinbaseCommercePlugin,
@@ -32,8 +32,8 @@ import {
     tradePlugin,
 } from "@ai16z/plugin-coinbase";
 import { confluxPlugin } from "@ai16z/plugin-conflux";
-import { imageGenerationPlugin } from "@ai16z/plugin-image-generation";
 import { evmPlugin } from "@ai16z/plugin-evm";
+import { imageGenerationPlugin } from "@ai16z/plugin-image-generation";
 import { createNodePlugin } from "@ai16z/plugin-node";
 import { solanaPlugin } from "@ai16z/plugin-solana";
 import { teePlugin } from "@ai16z/plugin-tee";
@@ -474,18 +474,24 @@ const startAgents = async () => {
         elizaLogger.error("Error starting agents:", error);
     }
 
-    function chat() {
-        const agentId = characters[0].name ?? "Agent";
-        rl.question("You: ", async (input) => {
-            await handleUserInput(input, agentId);
-            if (input.toLowerCase() !== "exit") {
-                chat(); // Loop back to ask another question
-            }
-        });
-    }
+    // function chat() {
+    //     const agentId = characters[0].name ?? "Agent";
+    //     rl.question("You: ", async (input) => {
+    //         await handleUserInput(input, agentId);
+    //         if (input.toLowerCase() !== "exit") {
+    //             chat(); // Loop back to ask another question
+    //         }
+    //     });
+    // }
 
     elizaLogger.log("Chat started. Type 'exit' to quit.");
-    chat();
+    // chat();
+
+    // Added this to keep the process alive
+    process.on("SIGINT", () => {
+        console.log("Gracefully shutting down...");
+        process.exit(0);
+    });
 };
 
 startAgents().catch((error) => {
