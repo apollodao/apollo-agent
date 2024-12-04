@@ -474,24 +474,27 @@ const startAgents = async () => {
         elizaLogger.error("Error starting agents:", error);
     }
 
-    // function chat() {
-    //     const agentId = characters[0].name ?? "Agent";
-    //     rl.question("You: ", async (input) => {
-    //         await handleUserInput(input, agentId);
-    //         if (input.toLowerCase() !== "exit") {
-    //             chat(); // Loop back to ask another question
-    //         }
-    //     });
-    // }
+    function chat() {
+        const agentId = characters[0].name ?? "Agent";
+        rl.question("You: ", async (input) => {
+            await handleUserInput(input, agentId);
+            if (input.toLowerCase() !== "exit") {
+                chat(); // Loop back to ask another question
+            }
+        });
+    }
 
     elizaLogger.log("Chat started. Type 'exit' to quit.");
-    // chat();
 
-    // Added this to keep the process alive
-    process.on("SIGINT", () => {
-        console.log("Gracefully shutting down...");
-        process.exit(0);
-    });
+    if (process.env.NODE_ENV !== "production") {
+        chat();
+    } else {
+        elizaLogger.log("Chat not started in production mode.");
+        process.on("SIGINT", () => {
+            console.log("Gracefully shutting down...");
+            process.exit(0);
+        });
+    }
 };
 
 startAgents().catch((error) => {
