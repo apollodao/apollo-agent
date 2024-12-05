@@ -5,8 +5,10 @@
     "type": "module",
     "types": "dist/index.d.ts",
     "dependencies": {
+        "@ai16z/eliza": "workspace:*",
         "cive": "0.7.1",
-        "@ai16z/eliza": "workspace:*"
+        "optional": "0.1.4",
+        "sharp": "0.33.5"
     },
     "scripts": {
         "build": "tsup --format esm --dts",

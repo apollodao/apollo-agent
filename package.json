@@ -3,6 +3,7 @@
     "scripts": {
         "preinstall": "npx only-allow pnpm",
         "build": "turbo run build",
+        "build:all": "pnpm add -w -D ts-node typescript @types/node && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/agent\" && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/eliza\" && pnpm clean && pnpm install -r --include=optional sharp && pnpm build && pnpm start",
         "start": "pnpm --filter \"@ai16z/agent\" start --isRoot",
         "start:client": "pnpm --dir client start --isRoot",
         "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@ai16z/agent\" start --isRoot",
@@ -22,6 +23,7 @@
     "devDependencies": {
         "@commitlint/cli": "18.6.1",
         "@commitlint/config-conventional": "18.6.3",
+        "@types/node": "^22.10.1",
         "@typescript-eslint/eslint-plugin": "8.16.0",
         "@typescript-eslint/parser": "8.16.0",
         "@vitest/eslint-plugin": "1.1.13",
@@ -33,6 +35,7 @@
         "lerna": "8.1.5",
         "only-allow": "1.2.1",
         "prettier": "3.4.1",
+        "ts-node": "10.9.2",
         "turbo": "2.3.3",
         "typedoc": "0.26.11",
         "typescript": "5.6.3",
@@ -50,9 +53,9 @@
     "dependencies": {
         "@0glabs/0g-ts-sdk": "0.2.1",
         "@coinbase/coinbase-sdk": "0.10.0",
+        "@vitest/eslint-plugin": "1.0.1",
         "amqplib": "0.10.5",
         "csv-parse": "5.6.0",
-        "@vitest/eslint-plugin": "1.0.1",
         "ollama-ai-provider": "0.16.1",
         "optional": "0.1.4",
         "pnpm": "9.14.4",

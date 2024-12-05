@@ -9,6 +9,8 @@
         "@octokit/rest": "20.1.1",
         "@octokit/types": "12.6.0",
         "glob": "10.4.5",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "simple-git": "3.27.0"
     },
     "devDependencies": {

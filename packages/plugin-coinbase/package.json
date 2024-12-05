@@ -5,8 +5,10 @@
     "type": "module",
     "types": "dist/index.d.ts",
     "dependencies": {
+        "@ai16z/eliza": "workspace:*",
         "coinbase-api": "1.0.5",
-        "@ai16z/eliza": "workspace:*"
+        "optional": "0.1.4",
+        "sharp": "0.33.5"
     },
     "devDependencies": {
         "tsup": "8.3.5"

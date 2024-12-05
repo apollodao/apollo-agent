@@ -8,6 +8,8 @@
         "@ai16z/eliza": "workspace:*",
         "@types/better-sqlite3": "7.6.12",
         "better-sqlite3": "11.6.0",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "sqlite-vec": "0.1.6"
     },
     "devDependencies": {

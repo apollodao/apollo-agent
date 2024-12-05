@@ -10,11 +10,12 @@
         "@avnu/avnu-sdk": "2.1.1",
         "@uniswap/sdk-core": "6.0.0",
         "@unruggable_starknet/core": "0.1.0",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "starknet": "6.18.0",
         "tsup": "8.3.5",
         "vitest": "2.1.5"
     },
-    "devDependencies": {},
     "scripts": {
         "build": "tsup --format esm --dts",
         "test": "vitest run",

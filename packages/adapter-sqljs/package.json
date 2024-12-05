@@ -7,6 +7,8 @@
     "dependencies": {
         "@ai16z/eliza": "workspace:*",
         "@types/sql.js": "1.4.9",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "sql.js": "1.12.0",
         "uuid": "11.0.3"
     },

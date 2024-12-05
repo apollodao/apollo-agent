@@ -8,6 +8,8 @@
         "@ai16z/eliza": "workspace:*",
         "agent-twitter-client": "0.0.16",
         "glob": "11.0.0",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "zod": "3.23.8"
     },
     "devDependencies": {

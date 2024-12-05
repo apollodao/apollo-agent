@@ -16,7 +16,7 @@ import {
     IDatabaseAdapter,
     IDatabaseCacheAdapter,
     ModelProviderName,
-    defaultCharacter,
+    apolloCharacter,
     elizaLogger,
     settings,
     stringToUuid,
@@ -179,7 +179,7 @@ export async function loadCharacters(
 
     if (loadedCharacters.length === 0) {
         elizaLogger.info("No characters found, using default character");
-        loadedCharacters.push(defaultCharacter);
+        loadedCharacters.push(apolloCharacter);
     }
 
     return loadedCharacters;
@@ -460,7 +460,7 @@ const startAgents = async () => {
 
     let charactersArg = args.characters || args.character;
 
-    let characters = [defaultCharacter];
+    let characters = [apolloCharacter];
 
     if (charactersArg) {
         characters = await loadCharacters(charactersArg);
@@ -486,6 +486,7 @@ const startAgents = async () => {
 
     elizaLogger.log("Chat started. Type 'exit' to quit.");
 
+    // test
     if (process.env.NODE_ENV !== "production") {
         chat();
     } else {

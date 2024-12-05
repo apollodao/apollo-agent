@@ -7,6 +7,8 @@
     "dependencies": {
         "@ai16z/eliza": "workspace:*",
         "@farcaster/hub-nodejs": "0.12.7",
+        "optional": "0.1.4",
+        "sharp": "0.33.5",
         "viem": "2.21.53"
     },
     "devDependencies": {
@@ -15,6 +17,5 @@
     "scripts": {
         "build": "tsup --format esm --dts",
         "dev": "tsup --watch"
-    },
-    "peerDependencies": {}
+    }
 }

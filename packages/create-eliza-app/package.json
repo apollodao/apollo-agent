@@ -21,7 +21,9 @@
     "license": "ISC",
     "dependencies": {
         "citty": "0.1.6",
-        "giget": "1.2.3"
+        "giget": "1.2.3",
+        "optional": "0.1.4",
+        "sharp": "0.33.5"
     },
     "devDependencies": {
         "automd": "0.3.12",
