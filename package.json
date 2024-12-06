@@ -3,8 +3,8 @@
     "scripts": {
         "preinstall": "npx only-allow pnpm",
         "build": "turbo run build",
-        "build:all": "pnpm add -w -D ts-node typescript @types/node && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/agent\" && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/eliza\" && pnpm clean && pnpm install -r --include=optional sharp && pnpm build && pnpm start",
-        "start": "pnpm --filter \"@ai16z/agent\" start --isRoot",
+        "build:all": "pnpm add -w -D ts-node typescript @types/node && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/agent\" && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/eliza\" && pnpm clean && pnpm install -r && pnpm build && pnpm start",
+        "start": "pnpm --filter \"@ai16z/agent\" start --isRoot --characters=\"apollo.character.json\"",
         "start:client": "pnpm --dir client start --isRoot",
         "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@ai16z/agent\" start --isRoot",
         "dev": "bash ./scripts/dev.sh",

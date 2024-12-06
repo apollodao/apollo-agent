@@ -36,8 +36,6 @@ timeline_cache.json
 
 *.sqlite
 
-characters/
-
 packages/core/src/providers/cache
 packages/core/src/providers/cache/*
 cache/*
@@ -47,3 +45,5 @@ packages/plugin-coinbase/package-lock.json
 tsup.config.bundled_*.mjs
 
 .turbo
+
+docs/**/*.md
