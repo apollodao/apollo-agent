@@ -1,14 +1,12 @@
 {
     "name": "@ai16z/client-farcaster",
-    "version": "0.1.4-alpha.3",
+    "version": "0.1.5-alpha.3",
     "main": "dist/index.js",
     "type": "module",
     "types": "dist/index.d.ts",
     "dependencies": {
         "@ai16z/eliza": "workspace:*",
         "@farcaster/hub-nodejs": "0.12.7",
-        "optional": "0.1.4",
-        "sharp": "0.33.5",
         "viem": "2.21.53"
     },
     "devDependencies": {
@@ -16,6 +14,6 @@
     },
     "scripts": {
         "build": "tsup --format esm --dts",
-        "dev": "tsup --watch"
+        "dev": "tsup --format esm --dts --watch"
     }
 }

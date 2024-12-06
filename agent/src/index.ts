@@ -9,6 +9,7 @@ import {
     AgentRuntime,
     CacheManager,
     Character,
+    Clients,
     DbCacheAdapter,
     FsCacheAdapter,
     IAgentRuntime,
@@ -16,26 +17,28 @@ import {
     IDatabaseAdapter,
     IDatabaseCacheAdapter,
     ModelProviderName,
-    apolloCharacter,
+    defaultCharacter,
     elizaLogger,
     settings,
     stringToUuid,
     validateCharacterConfig,
 } from "@ai16z/eliza";
 import { zgPlugin } from "@ai16z/plugin-0g";
-import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 import { goatPlugin } from "@ai16z/plugin-goat";
+import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
 // import { buttplugPlugin } from "@ai16z/plugin-buttplug";
 import {
     coinbaseCommercePlugin,
     coinbaseMassPaymentsPlugin,
     tradePlugin,
+    tokenContractPlugin,
 } from "@ai16z/plugin-coinbase";
 import { confluxPlugin } from "@ai16z/plugin-conflux";
-import { evmPlugin } from "@ai16z/plugin-evm";
 import { imageGenerationPlugin } from "@ai16z/plugin-image-generation";
+import { evmPlugin } from "@ai16z/plugin-evm";
 import { createNodePlugin } from "@ai16z/plugin-node";
 import { solanaPlugin } from "@ai16z/plugin-solana";
+import { aptosPlugin, TransferAptosToken } from "@ai16z/plugin-aptos";
 import { teePlugin } from "@ai16z/plugin-tee";
 import Database from "better-sqlite3";
 import fs from "fs";
@@ -179,7 +182,7 @@ export async function loadCharacters(
 
     if (loadedCharacters.length === 0) {
         elizaLogger.info("No characters found, using default character");
-        loadedCharacters.push(apolloCharacter);
+        loadedCharacters.push(defaultCharacter);
     }
 
     return loadedCharacters;
@@ -388,10 +391,11 @@ export function createAgent(
                 : null,
             ...(getSecret(character, "COINBASE_API_KEY") &&
             getSecret(character, "COINBASE_PRIVATE_KEY")
-                ? [coinbaseMassPaymentsPlugin, tradePlugin]
+                ? [coinbaseMassPaymentsPlugin, tradePlugin, tokenContractPlugin]
                 : []),
             getSecret(character, "WALLET_SECRET_SALT") ? teePlugin : null,
             getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
+            getSecret(character, "APTOS_PRIVATE_KEY") ? aptosPlugin : null,
         ].filter(Boolean),
         providers: [],
         actions: [],
@@ -460,7 +464,7 @@ const startAgents = async () => {
 
     let charactersArg = args.characters || args.character;
 
-    let characters = [apolloCharacter];
+    let characters = [defaultCharacter];
 
     if (charactersArg) {
         characters = await loadCharacters(charactersArg);
@@ -485,16 +489,8 @@ const startAgents = async () => {
     }
 
     elizaLogger.log("Chat started. Type 'exit' to quit.");
-
-    // test
-    if (process.env.NODE_ENV !== "production") {
+    if (!args["non-interactive"]) {
         chat();
-    } else {
-        elizaLogger.log("Chat not started in production mode.");
-        process.on("SIGINT", () => {
-            console.log("Gracefully shutting down...");
-            process.exit(0);
-        });
     }
 };
 
