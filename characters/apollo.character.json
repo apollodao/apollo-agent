@@ -1,9 +1,7 @@
 {
     "name": "Apollo",
     "username": "apollo",
-    "plugins": [
-        "solana"
-    ],
+    "plugins": [],
     "clients": [
         "discord"
     ],
