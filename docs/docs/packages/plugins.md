@@ -108,7 +108,7 @@ Integrates Solana blockchain functionality:
 - `walletProvider` - Wallet management
 - `trustScoreProvider` - Transaction trust metrics
 
-### Charity Contributions
+##### Charity Contributions
 
 All Coinbase trades and transfers automatically donate 1% of the transaction amount to charity. Currently, the charity addresses are hardcoded based on the network used for the transaction, with the current charity being supported as X.
 
@@ -137,7 +137,7 @@ This plugin enables Eliza to interact with the Coinbase Commerce API to create a
 
 ---
 
-### Coinbase Wallet Management
+##### Coinbase Wallet Management
 
 The plugin automatically handles wallet creation or uses an existing wallet if the required details are provided during the first run.
 
@@ -302,7 +302,7 @@ When successful, a response similar to the following will be returned:
 
 ---
 
-#### 8. Coinbase Token Contract Plugin (`@eliza/plugin-coinbase`)
+#### 7. Coinbase Token Contract Plugin (`@eliza/plugin-coinbase`)
 
 This plugin enables the deployment and interaction with various token contracts (ERC20, ERC721, ERC1155) using the Coinbase SDK. It provides functionality for both deploying new token contracts and interacting with existing ones.
 
@@ -445,7 +445,7 @@ const response = await runtime.triggerAction("INVOKE_CONTRACT", {
 
 ---
 
-#### 7. TEE Plugin (`@ai16z/plugin-tee`)
+#### 8. TEE Plugin (`@ai16z/plugin-tee`)
 
 Integrates [Dstack SDK](https://github.com/Dstack-TEE/dstack) to enable TEE (Trusted Execution Environment) functionality and deploy secure & privacy-enhanced Eliza Agents:
 
@@ -532,6 +532,76 @@ WALLET_SECRET_SALT=your-secret-salt // Required to single agent deployments
 ```
 
 ---
+
+#### 9. Webhook Plugin (`@eliza/plugin-coinbase-webhooks`)
+
+Manages webhooks using the Coinbase SDK, allowing for the creation and management of webhooks to listen for specific events on the Coinbase platform.
+
+**Actions:**
+
+- `CREATE_WEBHOOK` - Create a new webhook to listen for specific events.
+  - **Inputs**:
+    - `networkId` (string): The network ID where the webhook should listen for events.
+    - `eventType` (string): The type of event to listen for (e.g., transfers).
+    - `eventFilters` (object, optional): Additional filters for the event.
+    - `eventTypeFilter` (string, optional): Specific event type filter.
+  - **Outputs**: Confirmation message with webhook details.
+  - **Example**:
+    ```json
+    {
+      "networkId": "base",
+      "eventType": "transfers",
+      "notificationUri": "https://your-notification-uri.com"
+    }
+    ```
+
+**Providers:**
+
+- `webhookProvider` - Retrieves a list of all configured webhooks.
+  - **Outputs**: A list of webhooks with details such as ID, URL, event type, and status.
+
+**Description:**
+
+The Webhook Plugin enables Eliza to interact with the Coinbase SDK to create and manage webhooks. This allows for real-time event handling and notifications based on specific criteria set by the user.
+
+**Usage Instructions:**
+
+1. **Configure the Plugin**
+   Add the plugin to your character’s configuration:
+
+   ```typescript
+   import { webhookPlugin } from "@eliza/plugin-coinbase-webhooks";
+
+   const character = {
+     plugins: [webhookPlugin],
+   };
+   ```
+
+2. **Ensure Secure Configuration**
+   Set the following environment variables or runtime settings to ensure the plugin functions securely:
+
+   - `COINBASE_API_KEY`: API key for Coinbase SDK.
+   - `COINBASE_PRIVATE_KEY`: Private key for secure transactions.
+   - `COINBASE_NOTIFICATION_URI`: URI where notifications should be sent.
+
+**Example Call**
+
+To create a webhook:
+
+```typescript
+const response = await runtime.triggerAction("CREATE_WEBHOOK", {
+  networkId: "base",
+  eventType: "transfers",
+  notificationUri: "https://your-notification-uri.com"
+});
+console.log("Webhook creation response:", response);
+```
+
+**Best Practices:**
+
+- **Secure Secrets Storage**: Ensure `COINBASE_API_KEY`, `COINBASE_PRIVATE_KEY`, and `COINBASE_NOTIFICATION_URI` are stored securely in `runtime.character.settings.secrets` or environment variables.
+- **Validation**: Always validate input parameters to ensure compliance with expected formats and supported networks.
+- **Error Handling**: Monitor logs for errors during webhook creation and adjust retry logic as needed.
 
 ### Writing Custom Plugins
 
