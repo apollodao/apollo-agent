@@ -111,6 +111,8 @@ function isAllStrings(arr: unknown[]): boolean {
 export async function loadCharacters(
     charactersArg: string
 ): Promise<Character[]> {
+    console.log({ charactersArg });
+
     let characterPaths = charactersArg
         ?.split(",")
         .map((filePath) => filePath.trim());

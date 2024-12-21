@@ -356,6 +356,8 @@ export class WalletProvider {
                 this.fetchPrices(runtime),
             ]);
 
+            console.log("portfolio", JSON.stringify(portfolio, null, 2));
+            console.log("prices", JSON.stringify(prices, null, 2));
             return this.formatPortfolio(runtime, portfolio, prices);
         } catch (error) {
             console.error("Error generating portfolio report:", error);
@@ -377,10 +379,7 @@ const walletProvider: Provider = {
                 runtime.getSetting("RPC_URL") || PROVIDER_CONFIG.DEFAULT_RPC
             );
 
-            const provider = new WalletProvider(
-                connection,
-                publicKey
-            );
+            const provider = new WalletProvider(connection, publicKey);
 
             return await provider.getFormattedPortfolio(runtime);
         } catch (error) {

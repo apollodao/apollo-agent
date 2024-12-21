@@ -10,6 +10,7 @@
         "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@ai16z/agent\" start --isRoot",
         "start:apollo": "pnpm --filter \"@ai16z/agent\" start --isRoot --characters=\"apollo.character.json\"",
         "dev": "bash ./scripts/dev.sh",
+        "dev:apollo": "bash ./scripts/dev.sh  --isRoot --characters=\"apollo.character.json\"",
         "lint": "bash ./scripts/lint.sh",
         "prettier-check": "npx prettier --check --cache .",
         "prettier": "npx prettier --write --cache .",
