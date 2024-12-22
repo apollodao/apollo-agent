@@ -1,4 +1,4 @@
-import { Plugin } from "@ai16z/eliza";
+import { Plugin } from "@elizaos/core";
 import { getTrendingTokensAction } from "./actions/getTrendingTokens";
 import { birdeyeProvider } from "./providers/birdeye";
 

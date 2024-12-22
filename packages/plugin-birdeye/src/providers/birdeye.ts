@@ -4,7 +4,7 @@ import {
     Provider,
     State,
     elizaLogger,
-} from "@ai16z/eliza";
+} from "@elizaos/core";
 
 interface TrendingToken {
     address: string;
@@ -92,6 +92,7 @@ export const birdeyeProvider: Provider = {
 
         // Initialize service only when needed
         const birdeyeService = new BirdeyeService(apiKey);
+        console.log("birdeyeService", birdeyeService);
 
         // We don't fetch data here - this provider just ensures the service is available
         // and returns information about available capabilities

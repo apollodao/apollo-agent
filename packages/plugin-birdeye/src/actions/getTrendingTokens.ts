@@ -5,7 +5,7 @@ import {
     Memory,
     State,
     elizaLogger,
-} from "@ai16z/eliza";
+} from "@elizaos/core";
 
 export const getTrendingTokensAction: Action = {
     name: "GET_TRENDING_TOKENS",
@@ -37,6 +37,8 @@ export const getTrendingTokensAction: Action = {
             if (!apiKey) {
                 throw new Error("BIRDEYE_API_KEY not configured");
             }
+
+            console.log("GET_TRENDING_TOKENS");
 
             callback({
                 text: "Here are the trending tokens:\n1. APOLLO (APL):\n   💰 $1.2345\n   📈 +5.67% 24h\n   📊 Vol: $1.23M\n   💧 Liq: $2.34M",
