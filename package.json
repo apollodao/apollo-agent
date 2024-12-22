@@ -4,13 +4,10 @@
         "preinstall": "npx only-allow pnpm",
         "build": "turbo run build --filter=!eliza-docs",
         "build-docker": "turbo run build",
-        "build:all": "pnpm add -w -D ts-node typescript @types/node && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/agent\" && pnpm add -D ts-node typescript @types/node --filter \"@ai16z/eliza\" && pnpm clean && pnpm install -r && pnpm build && pnpm start",
-        "start": "pnpm --filter \"@ai16z/agent\" start --isRoot",
+        "start": "pnpm --filter \"@elizaos/agent\" start --isRoot",
         "start:client": "pnpm --dir client dev",
-        "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@ai16z/agent\" start --isRoot",
-        "start:apollo": "pnpm --filter \"@ai16z/agent\" start --isRoot --characters=\"apollo.character.json\"",
+        "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@elizaos/agent\" start --isRoot",
         "dev": "bash ./scripts/dev.sh",
-        "dev:apollo": "bash ./scripts/dev.sh  --isRoot --characters=\"apollo.character.json\"",
         "lint": "bash ./scripts/lint.sh",
         "prettier-check": "npx prettier --check --cache .",
         "prettier": "npx prettier --write --cache .",
@@ -43,8 +40,7 @@
         "typedoc": "0.26.11",
         "typescript": "5.6.3",
         "vite": "5.4.11",
-        "vitest": "2.1.5",
-        "zx": "^8.2.4"
+        "vitest": "2.1.5"
     },
     "pnpm": {
         "overrides": {
@@ -67,7 +63,7 @@
         "sharp": "0.33.5",
         "tslog": "4.9.3"
     },
-    "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c",
+    "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
     "workspaces": [
         "packages/*"
     ]
