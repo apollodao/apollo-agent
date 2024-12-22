@@ -11,7 +11,6 @@ import { executeSwapForDAO } from "./actions/swapDao";
 import take_order from "./actions/takeOrder";
 import transferToken from "./actions/transfer.ts";
 import { trustEvaluator } from "./evaluators/trust.ts";
-import { birdeyeProvider } from "./providers/birdeye.ts";
 import { TokenProvider } from "./providers/token.ts";
 import { trustScoreProvider } from "./providers/trustScoreProvider.ts";
 import { walletProvider, WalletProvider } from "./providers/wallet.ts";
@@ -30,7 +29,7 @@ export const solanaPlugin: Plugin = {
         take_order,
     ],
     evaluators: [trustEvaluator],
-    providers: [walletProvider, trustScoreProvider, birdeyeProvider],
+    providers: [walletProvider, trustScoreProvider],
 };
 
 export default solanaPlugin;

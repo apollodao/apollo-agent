@@ -487,6 +487,7 @@ export async function createAgent(
             getSecret(character, "CONFLUX_CORE_PRIVATE_KEY")
                 ? confluxPlugin
                 : null,
+            // getSecret(character, "BIRDEYE_API_KEY") ? birdeyePlugin : null,
             nodePlugin,
             getSecret(character, "SOLANA_PUBLIC_KEY") ||
             (getSecret(character, "WALLET_PUBLIC_KEY") &&
@@ -601,8 +602,6 @@ async function startAgent(
             cache,
             token
         );
-
-        console.log("runtime", runtime);
 
         // start services/plugins/process knowledge
         await runtime.initialize();

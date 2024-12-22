@@ -356,8 +356,6 @@ export class WalletProvider {
                 this.fetchPrices(runtime),
             ]);
 
-            console.log("portfolio", JSON.stringify(portfolio, null, 2));
-            console.log("prices", JSON.stringify(prices, null, 2));
             return this.formatPortfolio(runtime, portfolio, prices);
         } catch (error) {
             console.error("Error generating portfolio report:", error);
