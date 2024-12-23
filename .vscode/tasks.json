@@ -11,6 +11,14 @@
             ],
             "label": "tsbuild",
             "group": "build"
+        },
+        {
+            "label": "nvm use 23.3",
+            "type": "shell",
+            "command": ". ${env:HOME}/.nvm/nvm.sh && nvm use 23.3",
+            "presentation": {
+                "reveal": "silent"
+            }
         }
     ]
 }

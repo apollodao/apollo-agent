@@ -40,13 +40,13 @@ cat << "EOF"
 *                                                                     *
 *     Add your plugin to the "dependencies" section like so:         *
 *                                                                     *
-*        "@ai16z/your-plugin-name": "workspace:*"                    *
+*        "@elizaos/your-plugin-name": "workspace:*"                    *
 *                                                                     *
 *  5. Edit the 'index.ts' file in 'agent/src':                       *
 *                                                                     *
 *     a. Import your plugin:                                         *
 *                                                                     *
-*        import yourPlugin from '@ai16z/your-plugin-name';           *
+*        import yourPlugin from '@elizaos/your-plugin-name';           *
 *                                                                     *
 *     b. Add your plugin to the `plugins` array:                     *
 *                                                                     *
@@ -74,7 +74,7 @@ if [ ! -d "$PACKAGES_DIR" ]; then
 fi
 
 # List of working folders to watch (relative to $PACKAGES_DIR)
-WORKING_FOLDERS=("client-direct") # Core is handled separately
+WORKING_FOLDERS=("client-direct" "plugin-birdeye") # Core is handled separately
 
 # Initialize an array to hold package-specific commands
 COMMANDS=()
