@@ -1,13 +1,11 @@
 import { Plugin } from "@elizaos/core";
-import { getTrendingTokensAction } from "./actions/getTrendingTokens";
-import { birdeyeProvider } from "./providers/birdeye";
-
+import { trendingTokensProvider } from "./providers/trending-tokens";
 export const birdeyePlugin: Plugin = {
     name: "birdeye",
     description: "Birdeye Plugin for token data and analytics",
-    actions: [getTrendingTokensAction],
+    actions: [],
     evaluators: [],
-    providers: [birdeyeProvider],
+    providers: [trendingTokensProvider],
 };
 
 export default birdeyePlugin;
