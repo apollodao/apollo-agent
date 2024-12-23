@@ -177,7 +177,7 @@ export const tokenListProvider: Provider = {
         }
 
         elizaLogger.info(
-            `Token list provider activated for ${requestedChain} token list query`
+            `TOKEN LIST provider activated for ${requestedChain} token list query`
         );
 
         const tokenList = await getTokenList(apiKey, {

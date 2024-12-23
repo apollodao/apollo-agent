@@ -7,16 +7,42 @@ import {
 } from "@elizaos/core";
 
 interface TokenOverview {
+    // Basic token info
     address: string;
     symbol: string;
     name: string;
+    decimals: number;
+    logoURI: string;
+
+    // Price and market data
     price: number;
-    priceChange24h: number;
-    volume24h: number;
+    priceChange24hPercent: number;
+    liquidity: number;
     marketCap: number;
-    fullyDilutedValuation: number;
-    totalSupply: number;
+    realMc: number;
+
+    // Supply info
+    supply: number;
     circulatingSupply: number;
+    holder: number;
+
+    // Volume data
+    v24h: number;
+    v24hUSD: number;
+
+    // Social/metadata
+    extensions?: {
+        website?: string;
+        twitter?: string;
+        telegram?: string;
+        discord?: string;
+        description?: string;
+        coingeckoId?: string;
+    };
+
+    // Trading info
+    lastTradeUnixTime: number;
+    numberMarkets: number;
 }
 
 const OVERVIEW_KEYWORDS = [
@@ -83,16 +109,79 @@ const getTokenOverview = async (
 };
 
 const formatTokenOverview = (token: TokenOverview, chain: string): string => {
-    return `Token Overview for ${token.name} (${token.symbol}) on ${chain.charAt(0).toUpperCase() + chain.slice(1)}:
+    const formatNumber = (num: number) =>
+        num
+            ? num.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+              })
+            : "N/A";
 
-• Price: $${token.price.toFixed(4)}
-• 24h Change: ${token.priceChange24h.toFixed(2)}%
-• 24h Volume: $${token.volume24h.toLocaleString()}
-• Market Cap: $${token.marketCap.toLocaleString()}
-• Fully Diluted Valuation: $${token.fullyDilutedValuation.toLocaleString()}
-• Total Supply: ${token.totalSupply.toLocaleString()}
-• Circulating Supply: ${token.circulatingSupply.toLocaleString()}
-• Contract Address: ${token.address}`;
+    const socialLinks = token.extensions
+        ? Object.entries(token.extensions)
+              .filter(([key, value]) => {
+                  try {
+                      return Boolean(
+                          value &&
+                              typeof value === "string" &&
+                              [
+                                  "website",
+                                  "twitter",
+                                  "telegram",
+                                  "discord",
+                              ].includes(key)
+                      );
+                  } catch (err) {
+                      elizaLogger.warn(
+                          `Error processing social link for key ${key}:`,
+                          err
+                      );
+                      return false;
+                  }
+              })
+              .map(([key, value]) => {
+                  try {
+                      return `• ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
+                  } catch (err) {
+                      elizaLogger.error(
+                          `Error formatting social link for ${key}:`,
+                          err
+                      );
+                      return "";
+                  }
+              })
+              .filter(Boolean)
+              .join("\n")
+        : "";
+
+    const lastTradeTime = new Date(
+        token.lastTradeUnixTime * 1000
+    ).toLocaleString();
+
+    return `Token Overview for ${token.name} (${token.symbol}) on ${chain.charAt(0).toUpperCase() + chain.slice(1)}
+
+📊 Market Data
+• Current Price: $${formatNumber(token.price)}
+• 24h Change: ${formatNumber(token.priceChange24hPercent)}%
+• Market Cap: $${formatNumber(token.marketCap)}
+• Real Market Cap: $${formatNumber(token.realMc)}
+• Liquidity: $${formatNumber(token.liquidity)}
+
+📈 Trading Info
+• 24h Volume: $${formatNumber(token.v24hUSD)}
+• Number of Markets: ${token.numberMarkets}
+• Last Trade: ${lastTradeTime}
+
+💰 Supply Information
+• Total Supply: ${formatNumber(token.supply)}
+• Circulating Supply: ${formatNumber(token.circulatingSupply)}
+• Number of Holders: ${token.holder.toLocaleString()}
+
+🔗 Token Details
+• Contract: ${token.address}
+• Decimals: ${token.decimals}
+${token.extensions?.description ? `• Description: ${token.extensions.description}\n` : ""}
+${socialLinks ? `\n🌐 Social Links\n${socialLinks}` : ""}`;
 };
 
 export const tokenOverviewProvider: Provider = {
@@ -114,13 +203,13 @@ export const tokenOverviewProvider: Provider = {
         }
 
         // Extract contract address - looking for 0x... or other chain-specific formats
-        const words = messageText.split(/\s+/);
+        const words = message.content.text.split(/\s+/);
         let contractAddress: string | null = null;
 
         // Look for contract address patterns
         for (const word of words) {
             // Ethereum-like addresses (0x...)
-            if (/^0x[a-fA-F0-9]{40}$/.test(word)) {
+            if (/^0x[a-fA-F0-9]{40}$/i.test(word)) {
                 contractAddress = word;
                 break;
             }
@@ -142,7 +231,7 @@ export const tokenOverviewProvider: Provider = {
             ) || "solana";
 
         elizaLogger.info(
-            `Token overview provider activated for address ${contractAddress} on ${requestedChain}`
+            `TOKEN OVERVIEW provider activated for address ${contractAddress} on ${requestedChain}`
         );
 
         const tokenOverview = await getTokenOverview(
