@@ -52,6 +52,7 @@ const ASCENDING_KEYWORDS = [
     "smallest",
     "weakest",
 ];
+
 const PAGINATION_KEYWORDS = [
     "more",
     "additional",
@@ -74,102 +75,98 @@ const SUPPORTED_CHAINS = [
     "sui",
 ];
 
-export class TrendingTokenService {
-    private apiKey: string;
-    private baseUrl = "https://public-api.birdeye.so";
+const BASE_URL = "https://public-api.birdeye.so";
 
-    constructor(apiKey: string) {
-        this.apiKey = apiKey;
-    }
-
-    async getTrendingTokens(
-        options: {
-            sort_by?: "volume24hUSD" | "rank" | "liquidity";
-            sort_type?: "desc" | "asc";
-            offset?: number;
-            limit?: number;
-            min_liquidity?: number;
-            chain?: string;
-        } = {}
-    ): Promise<TrendingToken[]> {
-        try {
-            const {
-                sort_by = "volume24hUSD",
-                sort_type = "desc",
-                offset = 0,
-                limit = 10,
-                min_liquidity = 1000,
-                chain = "solana",
-            } = options;
-
-            const params = new URLSearchParams({
-                sort_by,
-                sort_type,
-                offset: offset.toString(),
-                limit: limit.toString(),
-                min_liquidity: min_liquidity.toString(),
-            });
-
-            const url = `${this.baseUrl}/defi/token_trending?${params.toString()}`;
-            elizaLogger.info("Fetching trending tokens from:", url);
-
-            const response = await fetch(url, {
-                headers: {
-                    "X-API-KEY": this.apiKey,
-                    "x-chain": chain,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return (await response.json()).data.tokens;
-        } catch (error) {
-            elizaLogger.error("Error fetching trending tokens:", error);
-            throw error;
-        }
-    }
-
-    formatTrendingTokensToString(
-        tokens: TrendingToken[],
-        chain: string
-    ): string {
-        if (!tokens.length) {
-            return "No trending tokens found.";
-        }
-
-        const formattedTokens = tokens
-            .map((token, index) => {
-                const priceFormatted =
-                    token.price != null
-                        ? token.price < 0.01
-                            ? token.price.toExponential(2)
-                            : token.price.toFixed(2)
-                        : "N/A";
-
-                const volume =
-                    token.volume24hUSD != null
-                        ? `$${(token.volume24hUSD / 1_000_000).toFixed(2)}M`
-                        : "N/A";
-
-                const liquidity =
-                    token.liquidity != null
-                        ? `$${(token.liquidity / 1_000_000).toFixed(2)}M`
-                        : "N/A";
-
-                return (
-                    `${index + 1}. ${token.name} (${token.symbol}):\n` +
-                    `   Price: ${priceFormatted}\n` +
-                    `   Volume 24h: ${volume}\n` +
-                    `   Liquidity: ${liquidity}`
-                );
-            })
-            .join("\n\n");
-
-        return `Here are the trending tokens on ${chain.charAt(0).toUpperCase() + chain.slice(1)}:\n\n${formattedTokens}`;
-    }
+interface GetTrendingTokensOptions {
+    sort_by?: "volume24hUSD" | "rank" | "liquidity";
+    sort_type?: "desc" | "asc";
+    offset?: number;
+    limit?: number;
+    min_liquidity?: number;
+    chain?: string;
 }
+
+const getTrendingTokens = async (
+    apiKey: string,
+    options: GetTrendingTokensOptions = {}
+): Promise<TrendingToken[]> => {
+    try {
+        const {
+            sort_by = "volume24hUSD",
+            sort_type = "desc",
+            offset = 0,
+            limit = 10,
+            min_liquidity = 1000,
+            chain = "solana",
+        } = options;
+
+        const params = new URLSearchParams({
+            sort_by,
+            sort_type,
+            offset: offset.toString(),
+            limit: limit.toString(),
+            min_liquidity: min_liquidity.toString(),
+        });
+
+        const url = `${BASE_URL}/defi/token_trending?${params.toString()}`;
+        elizaLogger.info("Fetching trending tokens from:", url);
+
+        const response = await fetch(url, {
+            headers: {
+                "X-API-KEY": apiKey,
+                "x-chain": chain,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return (await response.json()).data.tokens;
+    } catch (error) {
+        elizaLogger.error("Error fetching trending tokens:", error);
+        throw error;
+    }
+};
+
+const formatTrendingTokensToString = (
+    tokens: TrendingToken[],
+    chain: string
+): string => {
+    if (!tokens.length) {
+        return "No trending tokens found.";
+    }
+
+    const formattedTokens = tokens
+        .map((token, index) => {
+            const priceFormatted =
+                token.price != null
+                    ? token.price < 0.01
+                        ? token.price.toExponential(2)
+                        : token.price.toFixed(2)
+                    : "N/A";
+
+            const volume =
+                token.volume24hUSD != null
+                    ? `$${(token.volume24hUSD / 1_000_000).toFixed(2)}M`
+                    : "N/A";
+
+            const liquidity =
+                token.liquidity != null
+                    ? `$${(token.liquidity / 1_000_000).toFixed(2)}M`
+                    : "N/A";
+
+            return (
+                `${index + 1}. ${token.name} (${token.symbol}):\n` +
+                `   Price: ${priceFormatted}\n` +
+                `   Volume 24h: ${volume}\n` +
+                `   Liquidity: ${liquidity}`
+            );
+        })
+        .join("\n\n");
+
+    return `Here are the trending tokens on ${chain.charAt(0).toUpperCase() + chain.slice(1)}:\n\n${formattedTokens}`;
+};
 
 export const trendingTokensProvider: Provider = {
     get: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
@@ -254,8 +251,7 @@ export const trendingTokensProvider: Provider = {
             `Trending tokens provider activated for ${requestedChain} trending tokens query`
         );
 
-        const trendingTokenService = new TrendingTokenService(apiKey);
-        const trendingTokens = await trendingTokenService.getTrendingTokens({
+        const trendingTokens = await getTrendingTokens(apiKey, {
             sort_by: sortBy,
             sort_type: sortType,
             offset,
@@ -263,15 +259,11 @@ export const trendingTokensProvider: Provider = {
             min_liquidity: 1000,
             chain: requestedChain,
         });
-        console.log("trendingTokens", trendingTokens);
 
-        const formattedTrending =
-            trendingTokenService.formatTrendingTokensToString(
-                trendingTokens,
-                requestedChain
-            );
-
-        console.log("formattedTrending", formattedTrending);
+        const formattedTrending = formatTrendingTokensToString(
+            trendingTokens,
+            requestedChain
+        );
 
         return formattedTrending;
     },
