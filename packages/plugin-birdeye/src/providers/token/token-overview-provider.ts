@@ -109,7 +109,7 @@ const formatNumber = (num: number): string => {
     if (!num && num !== 0) return "N/A";
     return num.toLocaleString("en-US", {
         minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 6,
     });
 };
 

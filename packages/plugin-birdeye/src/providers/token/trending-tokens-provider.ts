@@ -248,7 +248,7 @@ export const trendingTokensProvider: Provider = {
         }
 
         elizaLogger.info(
-            `Trending tokens provider activated for ${requestedChain} trending tokens query`
+            `TRENDING TOKENS provider activated for ${requestedChain} trending tokens query`
         );
 
         const trendingTokens = await getTrendingTokens(apiKey, {

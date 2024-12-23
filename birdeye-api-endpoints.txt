@@ -1,0 +1,57 @@
+Birdeye API Endpoints
+Base URL: https://public-api.birdeye.so
+
+# Defi APIs
+- GET /defi/networks - Get supported networks
+- GET /defi/price - Get price
+- GET /defi/price_multiple - Get multiple prices
+- POST /defi/price_multiple - Get multiple prices (POST method)
+- GET /defi/price_history - Get historical price
+- GET /defi/price_history_unix - Get historical price by unix time
+- GET /defi/trades_token - Get token trades
+- GET /defi/trades_pair - Get pair trades
+- GET /defi/trades_token_seek_time - Get token trades by time
+- GET /defi/trades_pair_seek_time - Get pair trades by time
+- GET /defi/ohlcv - Get OHLCV data
+- GET /defi/ohlcv_pair - Get pair OHLCV data
+- GET /defi/ohlcv_base_quote - Get base/quote OHLCV data
+- GET /defi/price_volume_single - Get single price volume
+- POST /defi/price_volume_multi - Get multiple price volumes
+
+# Token APIs
+- GET /token/list_v1 - Get token list (V1)
+- GET /token/security - Get token security info
+- GET /token/overview - Get token overview
+- GET /token/creation_info - Get token creation info
+- GET /token/trending_list - Get trending tokens
+- POST /token/list_all_v2 - Get all tokens (V2)
+- GET /token/new_listing - Get new token listings
+- GET /token/top_traders - Get top traders
+- GET /token/all_market_list - Get all market list
+- GET /token/metadata_single - Get single token metadata
+- GET /token/metadata_multiple - Get multiple token metadata
+- GET /token/market_data - Get token market data
+- GET /token/trade_data_single - Get single token trade data
+- GET /token/trade_data_multiple - Get multiple token trade data
+- GET /token/holder - Get token holders
+- GET /token/mint_burn - Get token mint/burn data
+
+# Wallet APIs (Beta)
+- GET /wallet/supported_networks - Get supported networks
+- GET /wallet/portfolio - Get wallet portfolio
+- GET /wallet/portfolio_multichain - Get multichain wallet portfolio
+- GET /wallet/token_balance - Get wallet token balance
+- GET /wallet/transaction_history - Get wallet transaction history
+- GET /wallet/transaction_history_multichain - Get multichain transaction history
+- POST /wallet/transaction_simulation - Simulate transaction
+
+# Trader APIs
+- GET /trader/gainers-losers - Get gainers/losers
+- GET /trader/trades_seek_time - Get trades by time
+
+# Pair APIs
+- GET /pair/overview_multiple - Get multiple pair overviews
+- GET /pair/overview_single - Get single pair overview
+
+# Search APIs
+- GET /search/token_market_data - Search token and market data

@@ -1,7 +1,22 @@
 import { Plugin } from "@elizaos/core";
-import { tokenListProvider } from "./providers/token-list";
-import { tokenOverviewProvider } from "./providers/token-overview";
-import { trendingTokensProvider } from "./providers/trending-tokens";
+import {
+    gainersLosersProvider,
+    ohlcvProvider,
+    pairOverviewProvider,
+    priceMultipleProvider,
+    priceProvider,
+    priceVolumeProvider,
+    tokenCreationProvider,
+    tokenListProvider,
+    tokenMarketDataProvider,
+    tokenOverviewProvider,
+    tokenSecurityProvider,
+    tokenTradeProvider,
+    tradesSeekProvider,
+    transactionHistoryProvider,
+    trendingTokensProvider,
+    walletPortfolioProvider,
+} from "./providers";
 
 export const birdeyePlugin: Plugin = {
     name: "birdeye",
@@ -9,9 +24,33 @@ export const birdeyePlugin: Plugin = {
     actions: [],
     evaluators: [],
     providers: [
-        trendingTokensProvider,
-        tokenListProvider,
+        // DeFi providers
+        priceProvider,
+        priceMultipleProvider,
+        ohlcvProvider,
+        priceVolumeProvider,
+
+        // Pair providers
+        pairOverviewProvider,
+
+        // Search providers
+        tokenMarketDataProvider,
+
+        // Token providers
         tokenOverviewProvider,
+        tokenSecurityProvider,
+        tokenListProvider,
+        trendingTokensProvider,
+        tokenCreationProvider,
+        tokenTradeProvider,
+
+        // Trader providers
+        gainersLosersProvider,
+        tradesSeekProvider,
+
+        // Wallet providers
+        transactionHistoryProvider,
+        walletPortfolioProvider,
     ],
 };
 
