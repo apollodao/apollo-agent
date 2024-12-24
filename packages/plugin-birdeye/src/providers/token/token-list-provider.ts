@@ -5,192 +5,194 @@ import {
     State,
     elizaLogger,
 } from "@elizaos/core";
+import {
+    BASE_URL,
+    Chain,
+    extractChain,
+    formatPercentChange,
+    formatValue,
+    makeApiRequest,
+    shortenAddress,
+} from "../utils";
 
-interface TokenListItem {
+// Types
+interface TokenListData {
     address: string;
-    chainId: number;
-    decimals: number;
-    logoURI: string;
     name: string;
     symbol: string;
-    tags: string[];
-    verified: boolean;
+    decimals: number;
+    price: number;
+    priceChange24h: number;
+    volume24h: number;
+    marketCap: number;
+    liquidity: number;
+    rank: number;
 }
 
-const TOKEN_LIST_KEYWORDS = [
+interface TokenListResponse {
+    data: TokenListData[];
+    totalCount: number;
+}
+
+// Constants
+const LIST_KEYWORDS = [
     "list",
-    "all",
-    "tokens",
-    "available",
-    "supported",
-    "show",
-    "find",
-    "search",
-];
+    "top tokens",
+    "popular tokens",
+    "trending tokens",
+    "token list",
+    "token ranking",
+    "token rankings",
+    "token leaderboard",
+    "best tokens",
+    "highest volume",
+    "highest market cap",
+    "highest liquidity",
+] as const;
 
-const CHAIN_KEYWORDS = [
-    "solana",
-    "ethereum",
-    "arbitrum",
-    "avalanche",
-    "bsc",
-    "optimism",
-    "polygon",
-    "base",
-    "zksync",
-    "sui",
-];
-
-const PAGINATION_KEYWORDS = [
-    "more",
-    "additional",
-    "next",
-    "other",
-    "show more",
-    "continue",
-];
-
-const BASE_URL = "https://public-api.birdeye.so";
-
-interface GetTokenListOptions {
-    offset?: number;
-    limit?: number;
-    chain?: string;
-}
+// Helper functions
+const containsListKeyword = (text: string): boolean => {
+    return LIST_KEYWORDS.some((keyword) =>
+        text.toLowerCase().includes(keyword.toLowerCase())
+    );
+};
 
 const getTokenList = async (
     apiKey: string,
-    options: GetTokenListOptions = {}
-): Promise<TokenListItem[]> => {
+    chain: Chain,
+    limit: number = 10
+): Promise<TokenListResponse | null> => {
     try {
-        const { offset = 0, limit = 10, chain = "solana" } = options;
-
         const params = new URLSearchParams({
-            offset: offset.toString(),
             limit: limit.toString(),
         });
+        const url = `${BASE_URL}/token/list?${params.toString()}`;
 
-        const url = `${BASE_URL}/defi/tokenlist?${params.toString()}`;
-        elizaLogger.info("Fetching token list from:", url);
+        elizaLogger.info(`Fetching token list on ${chain} from:`, url);
 
-        const response = await fetch(url, {
-            headers: {
-                "X-API-KEY": apiKey,
-                "x-chain": chain,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return (await response.json()).data.tokens;
+        return await makeApiRequest<TokenListResponse>(url, { apiKey, chain });
     } catch (error) {
-        elizaLogger.error("Error fetching token list:", error);
-        throw error;
+        if (error instanceof Error) {
+            elizaLogger.error("Error fetching token list:", error.message);
+        }
+        return null;
     }
 };
 
-const formatTokenListToString = (
-    tokens: TokenListItem[],
-    chain: string
-): string => {
-    if (!tokens.length) {
-        return "No tokens found.";
+const formatTokenData = (token: TokenListData, rank: number): string => {
+    let response = `${rank}. ${token.name} (${token.symbol})\n`;
+    response += `   • Address: ${shortenAddress(token.address)}\n`;
+    response += `   • Price: ${formatValue(token.price)} (${formatPercentChange(token.priceChange24h)})\n`;
+    response += `   • Volume 24h: ${formatValue(token.volume24h)}\n`;
+    response += `   • Market Cap: ${formatValue(token.marketCap)}\n`;
+    response += `   • Liquidity: ${formatValue(token.liquidity)}`;
+    return response;
+};
+
+const analyzeTokenList = (tokens: TokenListData[]): string => {
+    let analysis = "";
+
+    // Volume analysis
+    const validVolumes = tokens.filter((t) => t.volume24h != null);
+    const totalVolume = validVolumes.reduce((sum, t) => sum + t.volume24h, 0);
+    const avgVolume =
+        validVolumes.length > 0 ? totalVolume / validVolumes.length : 0;
+    const highVolumeTokens = validVolumes.filter(
+        (t) => t.volume24h > avgVolume * 2
+    );
+
+    if (highVolumeTokens.length > 0) {
+        analysis += `🔥 ${highVolumeTokens.length} tokens showing exceptional trading activity.\n`;
     }
 
-    const formattedTokens = tokens
-        .map((token, index) => {
-            return (
-                `${index + 1}. ${token.name} (${token.symbol}):\n` +
-                `   Address: ${token.address}\n` +
-                `   Decimals: ${token.decimals}\n` +
-                `   Verified: ${token.verified ? "Yes" : "No"}` +
-                (token.tags?.length
-                    ? `\n   Tags: ${token.tags.join(", ")}`
-                    : "")
-            );
-        })
-        .join("\n\n");
+    // Price movement analysis
+    const validPriceChanges = tokens.filter((t) => t.priceChange24h != null);
+    const positiveMovers = validPriceChanges.filter(
+        (t) => t.priceChange24h > 0
+    );
+    const strongMovers = validPriceChanges.filter(
+        (t) => Math.abs(t.priceChange24h) > 10
+    );
 
-    return `Here are the tokens on ${chain.charAt(0).toUpperCase() + chain.slice(1)}:\n\n${formattedTokens}`;
+    if (validPriceChanges.length > 0) {
+        if (positiveMovers.length > validPriceChanges.length / 2) {
+            analysis +=
+                "📈 Market showing bullish trend with majority positive price movement.\n";
+        } else {
+            analysis +=
+                "📉 Market showing bearish trend with majority negative price movement.\n";
+        }
+
+        if (strongMovers.length > 0) {
+            analysis += `⚡ ${strongMovers.length} tokens with significant price movement (>10%).\n`;
+        }
+    }
+
+    // Liquidity analysis
+    const totalLiquidity = tokens.reduce((sum, t) => sum + t.liquidity, 0);
+    const avgLiquidity = totalLiquidity / tokens.length;
+    const highLiquidityTokens = tokens.filter(
+        (t) => t.liquidity > avgLiquidity * 2
+    );
+
+    if (highLiquidityTokens.length > 0) {
+        analysis += `💧 ${highLiquidityTokens.length} tokens with notably high liquidity.\n`;
+    }
+
+    return analysis;
+};
+
+const formatListResponse = (data: TokenListResponse, chain: Chain): string => {
+    const chainName = chain.charAt(0).toUpperCase() + chain.slice(1);
+
+    let response = `Top Tokens on ${chainName}\n\n`;
+
+    // Market Analysis
+    response += "📊 Market Analysis\n";
+    response += analyzeTokenList(data.data) + "\n\n";
+
+    // Token List
+    response += "🏆 Token Rankings\n";
+    data.data.forEach((token, index) => {
+        response += formatTokenData(token, index + 1) + "\n\n";
+    });
+
+    if (data.totalCount > data.data.length) {
+        response += `Showing ${data.data.length} of ${data.totalCount} total tokens.`;
+    }
+
+    return response;
 };
 
 export const tokenListProvider: Provider = {
-    get: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
+    get: async (
+        runtime: IAgentRuntime,
+        message: Memory,
+        _state?: State
+    ): Promise<string | null> => {
         const apiKey = runtime.getSetting("BIRDEYE_API_KEY");
         if (!apiKey) {
+            elizaLogger.error("BIRDEYE_API_KEY not found in runtime settings");
             return null;
         }
 
-        const messageText = message.content.text.toLowerCase();
+        const messageText = message.content.text;
 
-        // Check if message contains token list related keywords
-        const hasTokenListKeyword = TOKEN_LIST_KEYWORDS.some((keyword) =>
-            messageText.includes(keyword)
-        );
-
-        // Check if the message is a direct question about token list
-        const isQuestionAboutTokens =
-            messageText.includes("?") &&
-            (messageText.includes("what") ||
-                messageText.includes("which") ||
-                messageText.includes("show")) &&
-            hasTokenListKeyword;
-
-        // Check recent conversation context from state
-        const recentMessages = (state?.recentMessagesData || []) as Memory[];
-        const isInTokenListConversation = recentMessages.some(
-            (msg) =>
-                msg.content?.text?.toLowerCase().includes("token") ||
-                msg.content?.text?.toLowerCase().includes("list")
-        );
-
-        // Determine if this is a pagination request
-        const isPaginationRequest = PAGINATION_KEYWORDS.some((keyword) =>
-            messageText.includes(keyword)
-        );
-
-        // Get the current offset from state or default to 0
-        const currentOffset = (state?.tokenListOffset as number) || 0;
-        const offset = isPaginationRequest ? currentOffset + 10 : 0;
-
-        // Determine which chain is being asked about
-        const requestedChain =
-            CHAIN_KEYWORDS.find((chain) =>
-                messageText.includes(chain.toLowerCase())
-            ) || "solana";
-
-        // Combine signals to make decision
-        const shouldProvideData =
-            // Direct questions about token list
-            isQuestionAboutTokens ||
-            // Explicit mentions of token list
-            hasTokenListKeyword ||
-            // Follow-up in a token list conversation
-            isInTokenListConversation ||
-            // Pagination request in conversation context
-            (isPaginationRequest && isInTokenListConversation);
-
-        if (!shouldProvideData) {
+        if (!containsListKeyword(messageText)) {
             return null;
         }
 
-        elizaLogger.info(
-            `TOKEN LIST provider activated for ${requestedChain} token list query`
-        );
+        const chain = extractChain(messageText);
+        const limit = messageText.toLowerCase().includes("all") ? 100 : 10;
 
-        const tokenList = await getTokenList(apiKey, {
-            offset,
-            limit: 10,
-            chain: requestedChain,
-        });
+        elizaLogger.info(`TOKEN LIST provider activated for ${chain}`);
 
-        const formattedTokenList = formatTokenListToString(
-            tokenList,
-            requestedChain
-        );
+        const listData = await getTokenList(apiKey, chain, limit);
 
-        return formattedTokenList;
+        if (!listData) {
+            return null;
+        }
+
+        return formatListResponse(listData, chain);
     },
 };

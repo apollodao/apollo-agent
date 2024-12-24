@@ -172,7 +172,7 @@ const formatTokenOverview = (token: TokenOverview, chain: string): string => {
 💰 Supply Information
 • Total Supply: ${formatNumber(token.supply)}
 • Circulating Supply: ${formatNumber(token.circulatingSupply)}
-• Number of Holders: ${token.holder.toLocaleString()}
+• Number of Holders: ${token.holder ? formatNumber(token.holder) : "N/A"}
 
 🔗 Token Details
 • Contract: ${token.address}

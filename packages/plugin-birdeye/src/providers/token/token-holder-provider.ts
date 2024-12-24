@@ -89,9 +89,9 @@ const getTokenHolders = async (
 
 const formatHolderData = (holder: HolderData): string => {
     let response = `${holder.rank}. ${shortenAddress(holder.address)}\n`;
-    response += `   • Balance: ${formatValue(holder.balance)}\n`;
-    response += `   • Value: ${formatValue(holder.balanceUSD)}\n`;
-    response += `   • Share: ${holder.share.toFixed(2)}%`;
+    response += `   • Balance: ${holder.balance ? formatValue(holder.balance) : "N/A"}\n`;
+    response += `   • Value: ${holder.balanceUSD ? formatValue(holder.balanceUSD) : "N/A"}\n`;
+    response += `   • Share: ${holder.share ? holder.share.toFixed(2) : "0.00"}%`;
     return response;
 };
 

@@ -190,20 +190,22 @@ const shortenAddress = (address: string): string => {
 const formatTrade = (trade: Trade): string => {
     const timestamp = new Date(trade.timestamp * 1000).toLocaleString();
     const priceFormatted =
-        trade.price < 0.01
-            ? trade.price.toExponential(2)
-            : trade.price.toFixed(2);
+        trade.price != null
+            ? trade.price < 0.01
+                ? trade.price.toExponential(2)
+                : trade.price.toFixed(2)
+            : "N/A";
     const side = trade.side === "buy" ? "🟢 Buy" : "🔴 Sell";
 
     let response = `${side} - ${timestamp}\n`;
     response += `• Price: $${priceFormatted}\n`;
-    response += `• Volume: ${formatValue(trade.volume)}\n`;
-    response += `• Source: ${trade.source}\n`;
+    response += `• Volume: ${trade.volume ? formatValue(trade.volume) : "N/A"}\n`;
+    response += `• Source: ${trade.source || "Unknown"}\n`;
     if (trade.buyer && trade.seller) {
         response += `• Buyer: ${shortenAddress(trade.buyer)}\n`;
         response += `• Seller: ${shortenAddress(trade.seller)}\n`;
     }
-    response += `• Tx: ${shortenAddress(trade.txHash)}`;
+    response += `• Tx: ${trade.txHash ? shortenAddress(trade.txHash) : "N/A"}`;
 
     return response;
 };

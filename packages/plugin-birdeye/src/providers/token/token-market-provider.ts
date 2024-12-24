@@ -159,18 +159,18 @@ const formatMarketResponse = (data: MarketResponse, chain: Chain): string => {
 
     // Volume Information
     response += "📈 Volume Information\n";
-    response += `24h Volume: ${formatValue(marketData.volume24h)}\n`;
-    response += `7d Volume: ${formatValue(marketData.volume7d)}\n\n`;
+    response += `24h Volume: ${marketData.volume24h ? formatValue(marketData.volume24h) : "N/A"}\n`;
+    response += `7d Volume: ${marketData.volume7d ? formatValue(marketData.volume7d) : "N/A"}\n\n`;
 
     // Market Metrics
     response += "📊 Market Metrics\n";
-    response += `Market Cap: ${formatValue(marketData.marketCap)}\n`;
-    response += `Fully Diluted Valuation: ${formatValue(marketData.fullyDilutedValuation)}\n`;
-    response += `Market Rank: #${marketData.rank}\n\n`;
+    response += `Market Cap: ${marketData.marketCap ? formatValue(marketData.marketCap) : "N/A"}\n`;
+    response += `Fully Diluted Valuation: ${marketData.fullyDilutedValuation ? formatValue(marketData.fullyDilutedValuation) : "N/A"}\n`;
+    response += `Market Rank: ${marketData.rank ? `#${marketData.rank}` : "N/A"}\n\n`;
 
     // Liquidity Information
     response += "💧 Liquidity Information\n";
-    response += `Current Liquidity: ${formatValue(marketData.liquidity)}\n\n`;
+    response += `Current Liquidity: ${marketData.liquidity ? formatValue(marketData.liquidity) : "N/A"}\n\n`;
     response += "Liquidity Changes:\n";
     response += formatLiquidityChanges(marketData);
 
