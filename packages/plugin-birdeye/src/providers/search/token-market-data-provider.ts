@@ -130,8 +130,12 @@ const formatSearchResultsToString = (
     return `Search results for "${query}" on ${chain.charAt(0).toUpperCase() + chain.slice(1)}:\n\n${formattedTokens}`;
 };
 
-export const searchTokensProvider: Provider = {
-    get: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
+export const tokenMarketDataProvider: Provider = {
+    get: async (
+        runtime: IAgentRuntime,
+        message: Memory,
+        _state?: State
+    ): Promise<string | null> => {
         const apiKey = runtime.getSetting("BIRDEYE_API_KEY");
         if (!apiKey) {
             return null;
@@ -180,7 +184,7 @@ export const searchTokensProvider: Provider = {
             ) || "solana";
 
         // Get the current offset from state or default to 0
-        const currentOffset = (state?.searchTokensOffset as number) || 0;
+        const currentOffset = (_state?.searchTokensOffset as number) || 0;
 
         // Combine signals to make decision
         const shouldProvideData =

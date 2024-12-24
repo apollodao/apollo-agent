@@ -109,7 +109,7 @@ const formatNumber = (num: number): string => {
     if (!num && num !== 0) return "N/A";
     return num.toLocaleString("en-US", {
         minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 6,
     });
 };
 
@@ -172,7 +172,7 @@ const formatTokenOverview = (token: TokenOverview, chain: string): string => {
 💰 Supply Information
 • Total Supply: ${formatNumber(token.supply)}
 • Circulating Supply: ${formatNumber(token.circulatingSupply)}
-• Number of Holders: ${token.holder.toLocaleString()}
+• Number of Holders: ${token.holder ? formatNumber(token.holder) : "N/A"}
 
 🔗 Token Details
 • Contract: ${token.address}

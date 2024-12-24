@@ -157,7 +157,7 @@ const formatTrendingTokensToString = (
                     : "N/A";
 
             return (
-                `${index + 1}. ${token.name} (${token.symbol}):\n` +
+                `${index + 1}. ${token.name || "Unknown"} (${token.symbol || "N/A"}):\n` +
                 `   Price: ${priceFormatted}\n` +
                 `   Volume 24h: ${volume}\n` +
                 `   Liquidity: ${liquidity}`
@@ -248,7 +248,7 @@ export const trendingTokensProvider: Provider = {
         }
 
         elizaLogger.info(
-            `Trending tokens provider activated for ${requestedChain} trending tokens query`
+            `TRENDING TOKENS provider activated for ${requestedChain} trending tokens query`
         );
 
         const trendingTokens = await getTrendingTokens(apiKey, {
