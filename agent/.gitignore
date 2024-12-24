@@ -1,7 +1,6 @@
 *.ts
 !index.ts
 !character.ts
-!apollo.ts
 .env
 *.env
 .env*
