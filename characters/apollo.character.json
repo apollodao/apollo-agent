@@ -3,7 +3,7 @@
     "username": "apollo",
     "plugins": [],
     "clients": [
-        "discord"
+        "auto"
     ],
     "modelProvider": "anthropic",
     "settings": {
