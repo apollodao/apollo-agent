@@ -1,4 +1,14 @@
 import { Client, IAgentRuntime, elizaLogger } from "@elizaos/core";
+import { APOLLO_WALLET_ADDRESS } from "./constants";
+import {
+    createMemory,
+    getMetadata,
+    getTokenOverview,
+    getTokenSecurity,
+    getTokenTradeData,
+    getWalletPortfolio,
+} from "./get-wallet-portfolio";
+import { generateThought } from "./utils";
 
 export class AutoClient {
     interval: NodeJS.Timeout;
@@ -8,65 +18,125 @@ export class AutoClient {
         this.runtime = runtime;
 
         // start a loop that runs every x seconds
-        this.interval = setInterval(async () => {
-            this.run();
-        }, 60 * 1000); // 1 minute
+        // this.interval = setInterval(
+        //     async () => {
+        //         this.updateAllPositionsAndStrategies();
+        //     },
+        //     5 * 60 * 1000
+        // ); // 5 minutes
 
-        this.run();
+        // this.updateAllPositionsAndStrategies();
     }
 
-    private run = async () => {
-        elizaLogger.log("running auto client...");
+    private updateAllPositionsAndStrategies = async () => {
+        elizaLogger.log("Running updateAllPositionsAndStrategies client...");
         elizaLogger.log("The time is: ", new Date().toISOString());
 
-        // get current positions
-
-        // check and evaluate market data for each token currently held to consider buy/sell
-
-        // check trending tokens
-
-        // check influencer tweets & sentiment
-
-        // check news
-
-        // check banter bubbles
-
-        // check google trends
-
-        // check reddit trends
-
-        // check twitter trends
-
-        // trigger action
-        // Example of triggering an action
-        const action = this.runtime.actions.find(
-            (a) => a.name === "TOKEN_SEARCH_SYMBOL"
+        // generate a thought about what to do
+        await createMemory(
+            this.runtime,
+            await generateThought(
+                this.runtime,
+                "I need to update all positions and strategies for my portfolio. I need to get the current positions, check and evaluate market data for each token currently held to consider buy/sell, check trending tokens, check influencer tweets & sentiment, check news, check banter bubbles, check google trends, check reddit trends, check twitter trends, get technical analysis data for each token",
+                {
+                    walletAddress: APOLLO_WALLET_ADDRESS,
+                }
+            )
         );
 
-        if (!action) {
-            elizaLogger.log("No action found");
-            return;
+        // get the current portfolio for the input wallet
+        const portfolio = await getWalletPortfolio(
+            this.runtime,
+            APOLLO_WALLET_ADDRESS
+        );
+
+        // for each token in the portfolio, do a little dance
+        for (let i = 0; i < portfolio.data.items.length; i++) {
+            const item = portfolio.data.items[i];
+
+            // generate a thought about this token
+            await createMemory(
+                this.runtime,
+                await generateThought(
+                    this.runtime,
+                    `Ok, i need to look at the token: ${item.symbol} - ${item.name} in my portfolio. This is my ${i + 1}th largest holding in this wallet. I need to look at the market data for this token, check trending tokens, check influencer tweets & sentiment, check news, check banter bubbles, check google trends, check reddit trends, check twitter trends, get technical analysis data for this token`,
+                    {
+                        token: item,
+                    }
+                )
+            );
+
+            // get the token overview and generate a thought about it
+            const overview = await getTokenOverview(this.runtime, item.address);
+            await createMemory(
+                this.runtime,
+                await generateThought(
+                    this.runtime,
+                    `Ok, I need to analyze the data in this token overview and determine if this token is a good buy, sell, or hold.`,
+                    {
+                        overview,
+                    }
+                )
+            );
+
+            // get the token metadata and generate a thought about it
+            const metadata = await getMetadata(this.runtime, item.address);
+            await createMemory(
+                this.runtime,
+                await generateThought(
+                    this.runtime,
+                    `Read and understand the metadata associated with this token to determine if this token is a good buy, sell, or hold.`,
+                    {
+                        metadata,
+                    }
+                )
+            );
+
+            // get the security data for this token
+            const security = await getTokenSecurity(this.runtime, item.address);
+            await createMemory(
+                this.runtime,
+                await generateThought(
+                    this.runtime,
+                    `Read and understand the security data associated with this token to determine if this token is a good buy, sell, or hold.`,
+                    {
+                        security,
+                    }
+                )
+            );
+
+            // get the trade data for this token
+            const tradeData = await getTokenTradeData(
+                this.runtime,
+                item.address
+            );
+            await createMemory(
+                this.runtime,
+                await generateThought(
+                    this.runtime,
+                    `Read and understand the trade data associated with this token to determine if this token is a good buy, sell, or hold.`,
+                    {
+                        tradeData,
+                    }
+                )
+            );
+
+            // summarize the recent memories related to this token and determine if its time to buy, sell, or hold
+
+            // TODO - get the influencer tweets & sentiment for this token
+
+            // TODO - get the news for this token
+
+            // TODO - get the banter bubbles for this token
+
+            // TODO - get the google trends for this token
+
+            // TODO - get the reddit trends for this token
+
+            // TODO - get the twitter trends for this token
         }
 
-        elizaLogger.log("Checking market data...");
-        const result = await action.handler(
-            this.runtime,
-            {
-                content: {
-                    text: "I want to you search for the token info of $ai16z",
-                },
-                userId: "12dea96f-ec20-0935-a6ab-75692c994959",
-                roomId: "0212b84f-9c29-0adf-bd65-e87cc58bdd36",
-                agentId: "633a74f5-d793-000c-ae28-02a1bf2f0da8",
-            },
-            null,
-            null,
-            (result) => {
-                elizaLogger.log("Result: ", result);
-                return Promise.resolve([]);
-            }
-        );
-        elizaLogger.log("Result: ", result);
+        elizaLogger.log("updateAllPositionsAndStrategies: finished running");
     };
 }
 

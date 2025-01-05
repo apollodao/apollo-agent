@@ -364,24 +364,40 @@ function initializeDatabase(dataDir: string) {
         const db = new PostgresDatabaseAdapter({
             connectionString: process.env.POSTGRES_URL,
             parseInputs: true,
+            // Add connection pool settings
+            pool: {
+                max: 20,
+                idleTimeoutMillis: 30000,
+                connectionTimeoutMillis: 2000,
+            },
+            // Add retry settings
+            retry: {
+                retries: 5,
+                factor: 2,
+                minTimeout: 1000,
+                maxTimeout: 5000,
+            },
         });
 
-        // Test the connection
-        db.init()
+        // Test the connection with retries
+        return db
+            .init()
             .then(() => {
                 elizaLogger.success(
                     "Successfully connected to PostgreSQL database"
                 );
+                return db;
             })
             .catch((error) => {
                 elizaLogger.error("Failed to connect to PostgreSQL:", error);
+                // Fallback to SQLite if PostgreSQL fails
+                elizaLogger.info("Falling back to SQLite database...");
+                const filePath = path.resolve(dataDir, "db.sqlite");
+                return new SqliteDatabaseAdapter(new Database(filePath));
             });
-
-        return db;
     } else {
         const filePath =
             process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
-        // ":memory:";
         const db = new SqliteDatabaseAdapter(new Database(filePath));
         return db;
     }
@@ -678,6 +694,8 @@ async function startAgent(
     directClient: DirectClient
 ): Promise<AgentRuntime> {
     let db: IDatabaseAdapter & IDatabaseCacheAdapter;
+    let runtime: AgentRuntime | undefined;
+
     try {
         character.id ??= stringToUuid(character.name);
         character.username ??= character.name;
@@ -689,23 +707,21 @@ async function startAgent(
             fs.mkdirSync(dataDir, { recursive: true });
         }
 
-        db = initializeDatabase(dataDir) as IDatabaseAdapter &
+        db = (await initializeDatabase(dataDir)) as IDatabaseAdapter &
             IDatabaseCacheAdapter;
 
-        await db.init();
+        if (!db) {
+            throw new Error("Failed to initialize database");
+        }
 
         const cache = initializeCache(
             process.env.CACHE_STORE ?? CacheStore.DATABASE,
             character,
             "",
             db
-        ); // "" should be replaced with dir for file system caching. THOUGHTS: might probably make this into an env
-        const runtime: AgentRuntime = await createAgent(
-            character,
-            db,
-            cache,
-            token
         );
+
+        runtime = await createAgent(character, db, cache, token);
 
         // start services/plugins/process knowledge
         await runtime.initialize();
@@ -725,10 +741,31 @@ async function startAgent(
             `Error starting agent for character ${character.name}:`,
             error
         );
-        elizaLogger.error(error);
-        if (db) {
-            await db.close();
+
+        // Clean up resources in case of error
+        if (runtime) {
+            try {
+                // Clean up any runtime resources if needed
+                runtime.clients = {};
+            } catch (cleanupError) {
+                elizaLogger.error(
+                    "Error during runtime cleanup:",
+                    cleanupError
+                );
+            }
         }
+
+        if (db) {
+            try {
+                await db.close();
+            } catch (closeError) {
+                elizaLogger.error(
+                    "Error closing database connection:",
+                    closeError
+                );
+            }
+        }
+
         throw error;
     }
 }
@@ -752,7 +789,7 @@ const checkPortAvailable = (port: number): Promise<boolean> => {
     });
 };
 
-const startAgents = async () => {
+export const startAgents = async () => {
     const directClient = new DirectClient();
     let serverPort = parseInt(settings.SERVER_PORT || "3000");
     const args = parseArguments();
