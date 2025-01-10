@@ -127,6 +127,10 @@ export function createApiRouter(
         const roomId = stringToUuid(req.params.roomId);
         let runtime = agents.get(agentId);
 
+        // get query params
+        const query = req.query;
+        const { count, start, end, excludeEmbeddings = false } = query;
+
         // if runtime is null, look for runtime with the same name
         if (!runtime) {
             runtime = Array.from(agents.values()).find(
@@ -142,6 +146,9 @@ export function createApiRouter(
         try {
             const memories = await runtime.messageManager.getMemories({
                 roomId,
+                count: count ? parseInt(count as string) : undefined,
+                start: start ? parseInt(start as string) : undefined,
+                end: end ? parseInt(end as string) : undefined,
             });
             const response = {
                 agentId,
@@ -169,7 +176,9 @@ export function createApiRouter(
                             })
                         ),
                     },
-                    // embedding: memory.embedding,
+                    embedding: !excludeEmbeddings
+                        ? memory.embedding
+                        : undefined,
                     roomId: memory.roomId,
                     unique: memory.unique,
                     similarity: memory.similarity,
