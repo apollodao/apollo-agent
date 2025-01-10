@@ -1,6 +1,6 @@
-import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import express from "express";
 
 import {
     AgentRuntime,
@@ -9,9 +9,9 @@ import {
     validateCharacterConfig,
 } from "@elizaos/core";
 
+import { stringToUuid } from "@elizaos/core";
 import { REST, Routes } from "discord.js";
 import { DirectClient } from ".";
-import { stringToUuid } from "@elizaos/core";
 
 export function createApiRouter(
     agents: Map<string, AgentRuntime>,
@@ -169,7 +169,7 @@ export function createApiRouter(
                             })
                         ),
                     },
-                    embedding: memory.embedding,
+                    // embedding: memory.embedding,
                     roomId: memory.roomId,
                     unique: memory.unique,
                     similarity: memory.similarity,

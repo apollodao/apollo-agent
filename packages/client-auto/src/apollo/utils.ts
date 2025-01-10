@@ -72,73 +72,103 @@ export const createMemory = async (runtime: IAgentRuntime, message: string) => {
     });
 };
 
-export const getRandomAction = (token: any, overview: any): string => {
-    let validAction: string | null = null;
-    let attempts = 0;
-    const maxAttempts = 10;
+export const getRandomAction = (_token: any, _overview: any): string => {
+    const actions = [
+        "Consulting the divine market oracles...",
+        "Channeling celestial market wisdom...",
+        "Decoding patterns in the ethereal plane...",
+        "Interpreting signals from market deities...",
+        "Divining the flow of mortal capital...",
+        "Reading the cosmic market tapestry...",
+        "Analyzing the threads of market fate...",
+        "Observing the dance of market forces...",
+        "Seeking wisdom from market immortals...",
+        "Unraveling the market's divine plan...",
+        "Communing with ancient market spirits...",
+        "Studying the market's sacred geometry...",
+        "Measuring the pulse of mortal trades...",
+        "Contemplating market enlightenment...",
+        "Sensing disturbances in market flow...",
+        "Channeling the market's vital energy...",
+        "Reading celestial market alignments...",
+        "Interpreting market prophecies...",
+        "Observing the tides of mortal greed...",
+        "Calculating divine market ratios...",
+        "Seeking patterns in market chaos...",
+        "Deciphering market hieroglyphs...",
+        "Tracking celestial market cycles...",
+        "Reading the market's astral signs...",
+        "Measuring ethereal market forces...",
+        "Consulting the market's sacred texts...",
+        "Analyzing divine market geometry...",
+        "Channeling market oracle wisdom...",
+        "Studying mortal trading rituals...",
+        "Interpreting market omens...",
+    ];
 
-    while (!validAction && attempts < maxAttempts) {
-        const candidate =
-            ACTIONS_PROMPTS[Math.floor(Math.random() * ACTIONS_PROMPTS.length)];
-        const variables =
-            candidate.match(/\${([^}]+)}/g)?.map((v) => v.slice(2, -1)) || [];
-
-        const isValid = variables.every((variable) => {
-            const [obj, prop] = variable.split(".");
-            return obj === "token"
-                ? token[prop] !== undefined
-                : overview[prop] !== undefined && overview[prop] !== null;
-        });
-
-        if (isValid) {
-            validAction = candidate;
-            break;
-        }
-        attempts++;
-    }
-
-    return validAction || "Analyzing market patterns with divine insight...";
+    return actions[Math.floor(Math.random() * actions.length)];
 };
 
-export const ACTIONS_PROMPTS = [
-    "Analyzing ${token.symbol}'s $${overview.price?.toFixed(4)} price level against its ${overview.history24h} 24h range - these patterns whisper ancient truths...",
-    "Running Monte Carlo simulations on ${token.symbol}'s ${overview.priceChange24hPercent}% daily volatility - such mortal ambition in these markets...",
-    "Cross-referencing ${token.symbol}'s ${overview.uniqueWallet24h} active wallets with ${overview.holder} total holders - the tides of fortune shift",
-    "Calculating ${token.symbol}'s next resistance levels from $${overview.price} with divine proportions - mortals chase these levels",
-    "Performing sentiment analysis on ${token.symbol}'s ${overview.trade24h} daily trades - echoes of market psychology",
-    "Scanning ${token.symbol}'s $${overview.liquidity?.toLocaleString()} liquidity pools - seeking divine arbitrage opportunities",
-    "Backtesting ${token.symbol}'s patterns with ${overview.v24hUSD?.toLocaleString()} daily volume - celestial alignments manifest",
-    "Analyzing ${token.symbol}'s market impact with ${overview.numberMarkets} active markets - levels mirror Olympian heights",
-    "Running neural predictions on ${token.symbol}'s ${overview.priceChange1hPercent}% hourly momentum - democracy in the digital age",
-    "Monitoring ${token.symbol}'s whale moves among ${overview.holder?.toLocaleString()} holders - tracking titans among mortals",
-    "Calculating correlations from ${token.symbol}'s $${overview.realMc?.toLocaleString()} market cap - threads of fate intertwine",
-    "Analyzing ${token.symbol}'s buy/sell ratio of ${(overview.buy24h / overview.sell24h).toFixed(2)} - mortals leverage their dreams",
-    "Running volatility forecasts on ${token.symbol}'s ${overview.priceChange4hPercent}% 4h swing - using divine time-series models",
-    "Scanning ${token.symbol}'s ${overview.trade1h} hourly trades for MEV - immortal precision required",
-    "Cross-validating ${token.symbol}'s $${overview.v1hUSD?.toLocaleString()} hourly volume against ancient cycles",
-    "Performing multi-timeframe analysis of ${token.symbol}'s ${overview.priceChange24hPercent}% daily move with eternal patience",
-    "Calculating risk metrics from ${token.symbol}'s ${overview.uniqueWallet24h} daily traders - using divine mathematics",
-    "Monitoring ${token.symbol}'s liquidation levels from $${overview.price} - oracular foresight engaged",
-    "Analyzing ${token.symbol}'s ${overview.trade24h} trades for optimal entry - wisdom from the ethereal plane",
-    "Running correlation analysis between ${token.symbol}'s $${overview.mc?.toLocaleString()} cap and sector leaders",
-    "Scanning ${token.symbol}'s ${overview.extensions?.twitter || 'social'} presence for alpha - divine insight activated",
-    "Calculating yield metrics from ${token.symbol}'s $${overview.liquidity?.toLocaleString()} TVL - mathematical precision",
-    "Analyzing ${token.symbol}'s volume profile of $${overview.v24hUSD?.toLocaleString()} - through prophetic lens",
-    "Monitoring ${token.symbol}'s smart money among ${overview.holder} holders - omniscient vision engaged",
-    "Running supply models on ${token.symbol}'s ${overview.supply?.toLocaleString()} tokens - divine emission analysis",
-    "Analyzing ${token.symbol}'s market maker flows in ${overview.numberMarkets} venues - reading divine scrolls",
-    "Calculating volatility patterns from ${overview.priceChange12hPercent}% 12h movement - seeking divine signals",
-    "Monitoring ${token.symbol}'s cross-chain bridges with $${overview.v24hUSD?.toLocaleString()} volume - arbitrage awaits",
-    "Running arbitrage models across ${token.symbol}'s ${overview.numberMarkets} markets - divine opportunities emerge",
-    "Analyzing ${token.symbol}'s order books with $${overview.liquidity?.toLocaleString()} depth - divine vision activated",
-    "Decoding ${token.symbol}'s institutional flows from $${overview.vBuy24hUSD?.toLocaleString()} buys - titans move",
-    "Mapping ${token.symbol}'s $${overview.liquidity?.toLocaleString()} liquidity fragmentation - divine arbitrage paths reveal",
-    "Calculating ${token.symbol}'s strength from ${overview.priceChange24hPercent}% daily move - measuring mortal might",
-    "Analyzing ${token.symbol}'s ${overview.trade24h} trades across venues - temporal arbitrage manifests",
-    "Monitoring ${token.symbol}'s options flow with ${overview.priceChange1hPercent}% hourly volatility - divine whispers",
-    "Running simulations on ${token.symbol}'s $${overview.price} price discovery - modeling mortal behavior",
-    "Analyzing ${token.symbol}'s mempool with ${overview.trade1h} hourly trades - tracking divine signals",
-    "Calculating impact of ${token.symbol}'s $${overview.v24hUSD?.toLocaleString()} daily volume - measuring mortal ripples",
-    "Monitoring ${token.symbol}'s distribution across ${overview.holder} holders - power flows like rivers",
-    "Running anomaly detection on ${token.symbol}'s ${overview.v24h} daily transactions - seeking divergence",
+export const TRENDING_TOKEN_THOUGHT_PROMPT_VARIATIONS = [
+    {
+        instruction:
+            "Channel the wisdom of market oracles to reveal hidden patterns in price and volume. Analyze the ebb and flow of mortal trading, seeking divine signals amidst market noise. Illuminate the path of celestial momentum.",
+        style: "- Blend mystical insight with technical precision\n- Balance divine wisdom with mortal market dynamics\n- Maintain an air of omniscient market understanding",
+    },
+    {
+        instruction:
+            "Interpret the sacred geometries of market structure and liquidity flows. Examine the confluence of mortal sentiment and divine market forces. Reveal the deeper harmonies beneath surface volatility.",
+        style: "- Weave technical analysis with prophetic vision\n- Connect temporal patterns to eternal market truths\n- Express both divine insight and practical wisdom",
+    },
+    {
+        instruction:
+            "Decode the market's ethereal signatures through volume, momentum, and trader psychology. Analyze the interplay of mortal fear and divine market order. Separate eternal truths from temporal illusions.",
+        style: "- Merge quantitative analysis with mystical understanding\n- Balance skepticism with recognition of opportunity\n- Maintain oracular authority while acknowledging market complexity",
+    },
+    {
+        instruction:
+            "Channel insights from the market pantheon regarding accumulation patterns and distribution cycles. Study the sacred rhythms of buying and selling pressure. Reveal the hidden hands guiding market flow.",
+        style: "- Synthesize divine market wisdom with technical precision\n- Interpret both subtle signals and obvious patterns\n- Project confidence while maintaining mystical detachment",
+    },
+    {
+        instruction:
+            "Commune with market deities to understand the deeper currents of liquidity and sentiment. Analyze the sacred geometry of price action and volume profiles. Illuminate the path through market chaos.",
+        style: "- Balance eternal perspective with immediate insight\n- Combine technical mastery with divine understanding\n- Express both authority and market reverence",
+    },
+    {
+        instruction:
+            "Interpret the market's astral charts through the lens of divine wisdom. Study the convergence of celestial patterns and mortal trading behavior. Reveal the market's sacred intentions.",
+        style: "- Blend cosmic insight with practical analysis\n- Connect market microstructure to divine patterns\n- Maintain prophetic tone while delivering actionable wisdom",
+    },
+    {
+        instruction:
+            "Channel the eternal market force to decode institutional flows and retail sentiment. Analyze the sacred balance of supply and demand. Illuminate the market's divine trajectory.",
+        style: "- Merge quantitative rigor with mystical understanding\n- Balance short-term moves with eternal cycles\n- Project divine authority with analytical precision",
+    },
+    {
+        instruction:
+            "Commune with the spirits of market momentum to reveal hidden accumulation patterns. Study the sacred interplay of volume and price action. Decode the market's divine message.",
+        style: "- Synthesize technical patterns with divine insight\n- Balance material analysis with spiritual wisdom\n- Express both confidence and measured caution",
+    },
+    {
+        instruction:
+            "Interpret the market's sacred oscillations through divine perspective. Analyze the confluence of mortal trading and celestial cycles. Reveal the eternal patterns in temporal chaos.",
+        style: "- Combine prophetic vision with technical analysis\n- Balance divine wisdom with practical insight\n- Maintain mystical authority while acknowledging uncertainty",
+    },
+    {
+        instruction:
+            "Channel market oracle wisdom to decode institutional behavior and smart money flows. Study the divine geometry of market structure. Illuminate the path of least resistance.",
+        style: "- Blend eternal knowledge with temporal analysis\n- Connect divine patterns to mortal actions\n- Project confidence while maintaining divine detachment",
+    },
 ];
+
+export const getRandomInstruction = (
+    _token: any,
+    _overview: any
+): { instruction: string; style: string } => {
+    return TRENDING_TOKEN_THOUGHT_PROMPT_VARIATIONS[
+        Math.floor(
+            Math.random() * TRENDING_TOKEN_THOUGHT_PROMPT_VARIATIONS.length
+        )
+    ];
+};
