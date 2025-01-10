@@ -8,12 +8,8 @@
     "modelProvider": "anthropic",
     "settings": {
         "secrets": {
-            "BIRDEYE_API_KEY": "a5a135c728e04bcb9ef0927bf89a73f6",
-            "SOLANA_PRIVATE_KEY": "9ZAWFHhCTHKKcqzQYZzDb4SFBLhARK4E58eaEvXSR3UZ2GGgfnwrf7gK8D5Cc1488FzdGwWpVVYEFUFmULXkeXt",
-            "SOLANA_PUBLIC_KEY": "49uWJR1Da1ikZJaBQLE9z4n5cdjvEHp47Vm9YgX9eiw9",
             "SLIPPAGE": "1",
-            "RPC_URL": "https://api.mainnet-beta.solana.com",
-            "HELIUS_API_KEY": "cb13d1e9-e189-4e1f-950f-5f58780d6b3c"
+            "RPC_URL": "https://api.mainnet-beta.solana.com"
         },
         "voice": {
             "model": "en_US-hfc_male-medium"
