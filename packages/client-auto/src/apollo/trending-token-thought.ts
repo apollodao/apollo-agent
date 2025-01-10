@@ -68,6 +68,8 @@ Respond with a single line of JSON in this exact format:
             modelClass: ModelClass.SMALL,
         });
 
+        console.log("response", JSON.stringify(response, null, 2));
+
         return cleanResponseText(
             response?.text || "Lost in thought at the moment"
         );

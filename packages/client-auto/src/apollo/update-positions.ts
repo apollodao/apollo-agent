@@ -5,9 +5,9 @@ import {
     getTokenSecurity,
     getTokenTradeData,
     getWalletPortfolio,
-} from "./birdeye-api";
-import { APOLLO_WALLET_ADDRESS } from "./constants";
-import { generateRandomThought } from "./random-thoughts";
+} from "./apollo/birdeye-api";
+import { APOLLO_WALLET_ADDRESS } from "./apollo/constants";
+import { generateRandomThought } from "./apollo/random-thoughts";
 import { createMemory } from "./utils";
 
 export const updateAllPositionsAndStrategies = async (
