@@ -1,5 +1,5 @@
 import { Client, IAgentRuntime } from "@elizaos/core";
-import { logRandomThoughts } from "./random-thoughts";
+import { trendingTokenThought } from "./trending-token-thought";
 
 export class AutoClient {
     interval: NodeJS.Timeout;
@@ -10,15 +10,18 @@ export class AutoClient {
         this.runtime = runtime;
 
         // Run immediately
-        void logRandomThoughts(this.runtime);
+        // void logRandomThoughts(this.runtime);
+        void trendingTokenThought(this.runtime);
 
         // start a loop that runs every x seconds
         this.interval = setInterval(
             async () => {
-                await logRandomThoughts(this.runtime);
+                // await logRandomThoughts(this.runtime);
+                await trendingTokenThought(this.runtime);
             },
-            1 * 30 * 1000
-        ); // 30 seconds
+            // 1 hour in production, 10 seconds in dev
+            process.env.NODE_ENV === "production" ? 60 * 60 * 1000 : 30 * 1000
+        );
     }
 }
 

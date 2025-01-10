@@ -3,7 +3,7 @@ import {
     BirdeyeProvider,
     WalletPortfolioResponse,
 } from "@elizaos/plugin-birdeye";
-import { APOLLO_TRADING_ROOM_ID, CHAIN_ID } from "./constants";
+import { CHAIN_ID } from "./constants";
 
 export const getWalletPortfolio = async (
     runtime: IAgentRuntime,
@@ -100,15 +100,24 @@ export const getTokenTradeData = async (
     return response;
 };
 
-export const createMemory = async (runtime: IAgentRuntime, message: string) => {
-    return await runtime.messageManager.createMemory({
-        id: crypto.randomUUID(),
-        userId: runtime.agentId,
-        agentId: runtime.agentId,
-        roomId: APOLLO_TRADING_ROOM_ID,
-        content: {
-            text: message,
+export const getTrendingTokens = async (
+    runtime: IAgentRuntime,
+    offset: number = 0,
+    limit: number = 20
+) => {
+    const provider = new BirdeyeProvider(runtime.cacheManager);
+    const response = await provider.fetchTokenTrending(
+        {
+            sort_by: "volume24hUSD",
+            sort_type: "desc",
+            offset,
+            limit,
         },
-        createdAt: Date.now(),
-    });
+        {
+            headers: {
+                chain: CHAIN_ID,
+            },
+        }
+    );
+    return response;
 };
