@@ -1,5 +1,5 @@
 import { Client, IAgentRuntime } from "@elizaos/core";
-import { trendingTokenThought } from "./trending-token-thought";
+import { trendingTokenThought } from "./apollo/trending-token-thought";
 
 export class AutoClient {
     interval: NodeJS.Timeout;
