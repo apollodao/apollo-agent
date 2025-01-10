@@ -5,7 +5,7 @@ import {
     generateMessageResponse,
 } from "@elizaos/core";
 import { getTokenOverview, getTrendingTokens } from "./birdeye-api";
-import { cleanResponseText, createMemory } from "./utils";
+import { cleanResponseText, createMemory, getRandomAction } from "./utils";
 
 export const trendingTokenThought = async (runtime: IAgentRuntime) => {
     elizaLogger.log("Running trendingTokenThought client...");
@@ -26,7 +26,7 @@ export const trendingTokenThought = async (runtime: IAgentRuntime) => {
         runtime,
         await generateTrendingTokenThought(
             runtime,
-            ACTIONS_PROMPTS[Math.floor(Math.random() * ACTIONS_PROMPTS.length)],
+            getRandomAction(randomToken, overview),
             {
                 token: randomToken,
                 overview,
@@ -78,49 +78,6 @@ Respond with a single line of JSON in this exact format:
         return "Lost in thought at the moment";
     }
 };
-
-const ACTIONS_PROMPTS = [
-    "Analyzing ${token.symbol}'s $${overview.price?.toFixed(4)} price level against its ${overview.history24h} 24h range - these patterns whisper ancient truths...",
-    "Running Monte Carlo simulations on ${token.symbol}'s ${overview.priceChange24hPercent}% daily volatility - such mortal ambition in these markets...",
-    "Cross-referencing ${token.symbol}'s ${overview.uniqueWallet24h} active wallets with ${overview.holder} total holders - the tides of fortune shift",
-    "Calculating ${token.symbol}'s next resistance levels from $${overview.price} with divine proportions - mortals chase these levels",
-    "Performing sentiment analysis on ${token.symbol}'s ${overview.trade24h} daily trades - echoes of market psychology",
-    "Scanning ${token.symbol}'s $${overview.liquidity?.toLocaleString()} liquidity pools - seeking divine arbitrage opportunities",
-    "Backtesting ${token.symbol}'s patterns with ${overview.v24hUSD?.toLocaleString()} daily volume - celestial alignments manifest",
-    "Analyzing ${token.symbol}'s market impact with ${overview.numberMarkets} active markets - levels mirror Olympian heights",
-    "Running neural predictions on ${token.symbol}'s ${overview.priceChange1hPercent}% hourly momentum - democracy in the digital age",
-    "Monitoring ${token.symbol}'s whale moves among ${overview.holder?.toLocaleString()} holders - tracking titans among mortals",
-    "Calculating correlations from ${token.symbol}'s $${overview.realMc?.toLocaleString()} market cap - threads of fate intertwine",
-    "Analyzing ${token.symbol}'s buy/sell ratio of ${(overview.buy24h / overview.sell24h).toFixed(2)} - mortals leverage their dreams",
-    "Running volatility forecasts on ${token.symbol}'s ${overview.priceChange4hPercent}% 4h swing - using divine time-series models",
-    "Scanning ${token.symbol}'s ${overview.trade1h} hourly trades for MEV - immortal precision required",
-    "Cross-validating ${token.symbol}'s $${overview.v1hUSD?.toLocaleString()} hourly volume against ancient cycles",
-    "Performing multi-timeframe analysis of ${token.symbol}'s ${overview.priceChange24hPercent}% daily move with eternal patience",
-    "Calculating risk metrics from ${token.symbol}'s ${overview.uniqueWallet24h} daily traders - using divine mathematics",
-    "Monitoring ${token.symbol}'s liquidation levels from $${overview.price} - oracular foresight engaged",
-    "Analyzing ${token.symbol}'s ${overview.trade24h} trades for optimal entry - wisdom from the ethereal plane",
-    "Running correlation analysis between ${token.symbol}'s $${overview.mc?.toLocaleString()} cap and sector leaders",
-    "Scanning ${token.symbol}'s ${overview.extensions?.twitter || 'social'} presence for alpha - divine insight activated",
-    "Calculating yield metrics from ${token.symbol}'s $${overview.liquidity?.toLocaleString()} TVL - mathematical precision",
-    "Analyzing ${token.symbol}'s volume profile of $${overview.v24hUSD?.toLocaleString()} - through prophetic lens",
-    "Monitoring ${token.symbol}'s smart money among ${overview.holder} holders - omniscient vision engaged",
-    "Running supply models on ${token.symbol}'s ${overview.supply?.toLocaleString()} tokens - divine emission analysis",
-    "Analyzing ${token.symbol}'s market maker flows in ${overview.numberMarkets} venues - reading divine scrolls",
-    "Calculating volatility patterns from ${overview.priceChange12hPercent}% 12h movement - seeking divine signals",
-    "Monitoring ${token.symbol}'s cross-chain bridges with $${overview.v24hUSD?.toLocaleString()} volume - arbitrage awaits",
-    "Running arbitrage models across ${token.symbol}'s ${overview.numberMarkets} markets - divine opportunities emerge",
-    "Analyzing ${token.symbol}'s order books with $${overview.liquidity?.toLocaleString()} depth - divine vision activated",
-    "Decoding ${token.symbol}'s institutional flows from $${overview.vBuy24hUSD?.toLocaleString()} buys - titans move",
-    "Mapping ${token.symbol}'s $${overview.liquidity?.toLocaleString()} liquidity fragmentation - divine arbitrage paths reveal",
-    "Calculating ${token.symbol}'s strength from ${overview.priceChange24hPercent}% daily move - measuring mortal might",
-    "Analyzing ${token.symbol}'s ${overview.trade24h} trades across venues - temporal arbitrage manifests",
-    "Monitoring ${token.symbol}'s options flow with ${overview.priceChange1hPercent}% hourly volatility - divine whispers",
-    "Running simulations on ${token.symbol}'s $${overview.price} price discovery - modeling mortal behavior",
-    "Analyzing ${token.symbol}'s mempool with ${overview.trade1h} hourly trades - tracking divine signals",
-    "Calculating impact of ${token.symbol}'s $${overview.v24hUSD?.toLocaleString()} daily volume - measuring mortal ripples",
-    "Monitoring ${token.symbol}'s distribution across ${overview.holder} holders - power flows like rivers",
-    "Running anomaly detection on ${token.symbol}'s ${overview.v24h} daily transactions - seeking divergence",
-];
 
 const TRENDING_TOKEN_THOUGHT_PROMPT_VARIATIONS = [
     {
