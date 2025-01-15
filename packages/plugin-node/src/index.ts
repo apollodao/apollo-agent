@@ -10,6 +10,8 @@ import {
     LlamaService,
     PdfService,
     SpeechService,
+    TranscriptionService,
+    VideoService,
 } from "./services/index.ts";
 
 export type NodePlugin = ReturnType<typeof createNodePlugin>;
@@ -24,8 +26,8 @@ export function createNodePlugin() {
             new LlamaService(),
             new PdfService(),
             new SpeechService(),
-            // new TranscriptionService(),
-            // new VideoService(),
+            new TranscriptionService(),
+            new VideoService(),
             new AwsS3Service(),
         ],
         actions: [describeImage],

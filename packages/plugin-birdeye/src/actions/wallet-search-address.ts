@@ -86,6 +86,8 @@ export const walletSearchAddressAction = {
                 })
             );
 
+            console.log(results);
+
             const completeResults = `I performed a search for the wallet addresses you requested and found the following results:\n\n${results
                 .map(
                     (result, i) =>
