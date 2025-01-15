@@ -1278,6 +1278,22 @@ export interface IImageDescriptionService extends Service {
     ): Promise<{ title: string; description: string }>;
 }
 
+export interface ITranscriptionService extends Service {
+    transcribeAttachment(audioBuffer: ArrayBuffer): Promise<string | null>;
+    transcribeAttachmentLocally(
+        audioBuffer: ArrayBuffer
+    ): Promise<string | null>;
+    transcribe(audioBuffer: ArrayBuffer): Promise<string | null>;
+    transcribeLocally(audioBuffer: ArrayBuffer): Promise<string | null>;
+}
+
+export interface IVideoService extends Service {
+    isVideoUrl(url: string): boolean;
+    fetchVideoInfo(url: string): Promise<Media>;
+    downloadVideo(videoInfo: Media): Promise<string>;
+    processVideo(url: string, runtime: IAgentRuntime): Promise<Media>;
+}
+
 export interface ITextGenerationService extends Service {
     initializeModel(): Promise<void>;
     queueMessageCompletion(
@@ -1404,6 +1420,8 @@ export interface ITeeLogService extends Service {
 
 export enum ServiceType {
     IMAGE_DESCRIPTION = "image_description",
+    TRANSCRIPTION = "transcription",
+    VIDEO = "video",
     TEXT_GENERATION = "text_generation",
     BROWSER = "browser",
     SPEECH_GENERATION = "speech_generation",

@@ -1,4 +1,5 @@
 import {
+    elizaLogger,
     IAgentRuntime,
     ITranscriptionService,
     IVideoService,
@@ -6,7 +7,6 @@ import {
     Service,
     ServiceType,
     stringToUuid,
-    elizaLogger,
 } from "@elizaos/core";
 import ffmpeg from "fluent-ffmpeg";
 import fs from "fs";

@@ -1,11 +1,13 @@
+import { createClient, DeepgramClient } from "@deepgram/sdk";
 import {
     elizaLogger,
     IAgentRuntime,
     ITranscriptionService,
+    Service,
+    ServiceType,
     settings,
     TranscriptionProvider,
 } from "@elizaos/core";
-import { Service, ServiceType } from "@elizaos/core";
 import { exec } from "child_process";
 import { File } from "formdata-node";
 import fs from "fs";
@@ -15,7 +17,6 @@ import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 import { promisify } from "util";
-import { createClient, DeepgramClient } from "@deepgram/sdk";
 
 // const __dirname = path.dirname(new URL(import.meta.url).pathname); #compatibility issues with windows
 const __filename = fileURLToPath(import.meta.url);
@@ -356,7 +357,9 @@ export class TranscriptionService
             await this.saveDebugAudio(audioBuffer, "openai_input_original");
 
             const arrayBuffer = new Uint8Array(audioBuffer).buffer;
-            const convertedBuffer = Buffer.from(await this.convertAudio(arrayBuffer)).buffer;
+            const convertedBuffer = Buffer.from(
+                await this.convertAudio(arrayBuffer)
+            ).buffer;
 
             await this.saveDebugAudio(
                 convertedBuffer,
@@ -409,7 +412,9 @@ export class TranscriptionService
             await this.saveDebugAudio(audioBuffer, "local_input_original");
 
             const arrayBuffer = new Uint8Array(audioBuffer).buffer;
-            const convertedBuffer = Buffer.from(await this.convertAudio(arrayBuffer)).buffer;
+            const convertedBuffer = Buffer.from(
+                await this.convertAudio(arrayBuffer)
+            ).buffer;
 
             await this.saveDebugAudio(convertedBuffer, "local_input_converted");
 

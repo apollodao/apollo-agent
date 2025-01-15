@@ -151,7 +151,6 @@ export function parseJSONObjectFromText(
                 jsonData = JSON.parse(objectMatch[0]);
             } catch (e) {
                 console.error("Error parsing JSON:", e);
-                console.log("text", text);
                 return null;
             }
         }
