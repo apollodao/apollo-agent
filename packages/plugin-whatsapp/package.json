@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "@elizaos/core": "workspace:*",
-        "axios": "1.7.8"
+        "axios": "1.15.2"
     },
     "devDependencies": {
         "@types/node": "20.17.9",
